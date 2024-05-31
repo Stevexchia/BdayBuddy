@@ -8,6 +8,7 @@ const { primary, tertiary } = Colors;
 import Start from "./screens/startscreen";
 import Login from "./screens/login";
 import Signup from "./screens/signup";
+import Home from "./auth_screens/homescreen"
 
 //React Navigation Stack
 import { NavigationContainer } from '@react-navigation/native';
@@ -34,6 +35,7 @@ function RootStack() {
                 <stack.Screen name="Start" component={Start} />
                 <stack.Screen name="Login" component={Login} />
                 <stack.Screen name="Signup" component={Signup} />
+                <stack.Screen name="Home" component={Home} />
             </stack.Navigator>
     );
 }

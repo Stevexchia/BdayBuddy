@@ -39,20 +39,20 @@ const Login = () => {
   }
 
 return (
-  <View style={styles.container}>
-    <KeyboardAvoidingView behavior="padding">
-    <TextInput value={email} 
-    style={styles.input} 
-    placeholder="Email" 
-    autoCapitalize="none" 
-    onChangeText={(text) => setEmail(text)}></TextInput>
-    
-    <TextInput secureTextEntry={true} 
-    value={password} 
-    style={styles.input} 
-    placeholder="Password" 
-    autoCapitalize="none" 
-    onChangeText={(text) => setPassword(text)}></TextInput>
+  <SafeAreaView className="flex-1 items-center justify-center">
+  <TextInput style={styles.input}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          placeholder="bdaybuddy@gmail.com"
+          autoCapitalize="none"
+          />
+
+       <TextInput style={styles.input}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          placeholder="**********"
+          secureTextEntry={true}
+          />
   
   {loading ? (
     <ActivityIndicator size="large" color="#0000ff" />
@@ -62,8 +62,7 @@ return (
       <Button title="Create account" onPress={signUp} />
     </>
   )}
-  </KeyboardAvoidingView>
-  </View>
+  </SafeAreaView>
 );
 };
 
@@ -76,11 +75,11 @@ container: {
   justifyContent: 'center',
 },
 input: {
-  marginVertical: 4,
-  height: 50,
   borderWidth: 1,
-  borderRadius: 4,
-  padding: 10,
-  backgroundColor: '#fff'
+    borderColor: '#777',
+    backgroundColor: '#FFFFEE',
+    borderRadius: 12,
+    padding: 10,
+    width: 240,
 }
 });
