@@ -2,7 +2,7 @@ import "react-native";
 
 import AuthHomeScreen from "./auth_screens/homescreen";
 
-import HomeScreen from "./screens/homescreen";
+import EntryScreen from "./screens/entryscreen";
 import LoginScreen from "./screens/login";
 import SignUpScreen from "./screens/signup";
 
@@ -11,9 +11,9 @@ export default function App() {
     if (loggedIn) {
         return <AuthHomeScreen />
     } else {
-        // return <HomeScreen />
+        // return <EntryScreen />
         // return <LoginScreen />
-        return <SignUpScreen />
+        return <SignUpScreen name={undefined} setName={undefined} email={undefined} setEmail={undefined} password={undefined} setPassword={undefined} isLogin={undefined} setIsLogin={undefined} handleAuthentication={undefined} />
     }
 
 };
