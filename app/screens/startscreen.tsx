@@ -3,13 +3,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from "./login";
 
-export default function HomeScreen() {
+export default function StartScreen({ navigation }) {
   function handleLogin() {
-    console.log("login");
+    console.log("Login");
+    navigation.navigate("Login")
   }
 
   function handleSignUp() {
-    console.log("sign up");
+    console.log("Sign Up");
+    navigation.navigate("Signup")
     // SignUpScreen();
   }
 
