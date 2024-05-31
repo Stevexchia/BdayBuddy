@@ -2,7 +2,7 @@ import "react-native";
 
 import AuthHomeScreen from "./auth_screens/homescreen";
 
-import HomeScreen from "./screens/homescreen";
+import HomeScreen from "./screens/entryscreen";
 import LoginScreen from "./screens/login";
 import SignUpScreen from "./screens/signup";
 
