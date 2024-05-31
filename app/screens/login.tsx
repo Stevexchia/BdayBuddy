@@ -17,12 +17,11 @@ const { brand, darklight, primary } = Colors;
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
 
 //***APP CODE STARTS BELOW***
-
-export default function LoginScreen({ email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication, navigation }) {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const auth = FIREBASE_AUTH;
   
   async function confirmLogin() {
     try {
@@ -34,12 +33,14 @@ export default function LoginScreen({ email, setEmail, password, setPassword, is
       console.error("Error logging in:", error.message);
       // Handle error - display error message to user
     }
+  }
 
   function handleSignUp() {
     console.log("Sign Up");
     // SignUpScreen();
     navigation.navigate("Signup")
   }
+  
   function googleLogin() {
     console.log("Login with Google");
     //google login authentication
@@ -88,6 +89,8 @@ export default function LoginScreen({ email, setEmail, password, setPassword, is
   );
 };
 
+export default Login;
+
 
 const styles = StyleSheet.create({
   input: {
@@ -125,5 +128,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 1,
     elevation: 1,
-  },
-})
+   },
+});
