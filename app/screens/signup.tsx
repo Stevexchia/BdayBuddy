@@ -59,9 +59,9 @@ const SignUpScreen = ({ navigation }) => {
       console.log("Sign Up successful!");
       navigation.navigate("Hobby");
     } catch (error) {
-      console.error("Error Signing Up:", error.message);
+      console.error("Error Signing Up:", (error as Error).message);
       // Handle error - display error message to user
-      setError(error.message);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -78,8 +78,8 @@ const SignUpScreen = ({ navigation }) => {
     console.log("Signup with Google");
     //google login authentication
   } catch(error) {
-    console.error("Error logging in with Google", error.message);
-    setError(error.message);
+    console.error("Error logging in with Google", (error as Error).message);
+    setError((error as Error).message);
   } finally {
     setLoading(false);
   }

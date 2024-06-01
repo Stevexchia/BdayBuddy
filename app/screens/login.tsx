@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
       console.log("Login successful!");
       navigation.navigate("Home");
     } catch (error) {
-      console.error("Error logging in:", error.message);
+      console.error("Error logging in:", (error as Error).message);
       // Handle error - display error message to user
     } finally {
       setLoading(false);
@@ -48,6 +48,7 @@ const Login = ({ navigation }) => {
     console.log("Login with Google");
     //google login authentication
   }
+  
   return (
    <SafeAreaView className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
       <Text className="text-3xl font-bold">Welcome to BdayBuddy!</Text>
