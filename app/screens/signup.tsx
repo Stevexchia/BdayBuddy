@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, doc, setDoc } from 'firebase/firestore'
 
 //icons
 import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -30,6 +30,11 @@ const SignUpScreen = ({ navigation }) => {
   async function confirmSignUp() {
     setLoading(true);
     setError('');
+    if (!name.trim()) {
+      setError('Please enter your name.');
+      setLoading(false);
+      return;
+    }
     if (password != confirmpassword) {
       setError('Passwords do not match.');
       console.log({error})
@@ -42,7 +47,11 @@ const SignUpScreen = ({ navigation }) => {
       const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
       const user = userCredential.user;
 
-      await addDoc(collection(db, "users"), {
+      // Create a document reference with user's UID as document ID
+      const userDocRef = doc(collection(db, "users"), user.uid);
+
+      // Set user data to the document
+      await setDoc(userDocRef, {
         name: name,
         email: email
       });
