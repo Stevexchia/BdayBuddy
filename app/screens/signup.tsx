@@ -1,8 +1,9 @@
 import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import React, { useState, useEffect } from 'react'
-import { FIREBASE_AUTH } from '../../FirebaseConfig'
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, addDoc } from 'firebase/firestore'
 
 //icons
 import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -15,21 +16,61 @@ import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
 
 //***APP CODE STARTS BELOW***
 
-export default function SignUpScreen({ name, setName, email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication, navigation }) {
+const SignUpScreen = ({ navigation }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmpassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const auth = FIREBASE_AUTH;
+  const db = FIREBASE_DB;
+
+  async function confirmSignUp() {
+    setLoading(true);
+    setError('');
+    if (password != confirmpassword) {
+      setError('Passwords do not match.');
+      console.log({error})
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Signing up...");
+      const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const user = userCredential.user;
+
+      console.log("Name:", name);
+
+      await addDoc(collection(db, "users"), {
+        name: name,
+        email: email
+      });
+      console.log("Document written with ID", user.uid)
+
+      console.log("Sign Up successful!");
+      navigation.navigate("Hobby");
+    } catch (error) {
+      console.error("Error logging in:", error.message);
+      // Handle error - display error message to user
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function handleLogin() {
     console.log("login");
     // LoginScreen();
     navigation.navigate("Login")
   }
-  function confirmSignUp() {
-    console.log("confirm sign up");
-    // SignUpScreen();
-    navigation.navigate("Home")
-  }
+ 
   function googleSignup() {
     console.log("Signup with Google");
     //google login authentication
   }
+
   return (
     <SafeAreaView className="bg-indigo-300 flex-1 items-center gap-3 justify-center"> 
        <Image className="flex w-20 h-20"
@@ -40,8 +81,8 @@ export default function SignUpScreen({ name, setName, email, setEmail, password,
          <Text className="justify-start p-1">Name</Text>
          <TextInput style={styles.input}
            value={name}
-           onChange={setName}
-           placeholder="name"
+           onChangeText={(text) => setName(text)}
+           placeholder="Set Username"
            autoCapitalize="none"
            >
           </TextInput>
@@ -51,8 +92,8 @@ export default function SignUpScreen({ name, setName, email, setEmail, password,
          <Text className="justify-start p-1">Email</Text>
          <TextInput style={styles.input}
            value={email}
-           onChangeText={setEmail}
-           placeholder="Email"
+           onChangeText={(text) => setEmail(text)}
+           placeholder="bdaybuddy@gmail.com"
            autoCapitalize="none"
            >
           </TextInput>
@@ -62,8 +103,8 @@ export default function SignUpScreen({ name, setName, email, setEmail, password,
          <Text className="justify-start p-1">Password</Text>
          <TextInput style={styles.input}
            value={password}
-           onChange={setPassword}
-           placeholder="Password"
+           onChangeText={(text) => setPassword(text)}
+           placeholder="**********"
            autoCapitalize="none"
            secureTextEntry={true}
            >
@@ -73,14 +114,17 @@ export default function SignUpScreen({ name, setName, email, setEmail, password,
        <View>
          <Text className="justify-start p-1">Confirm Password</Text>
          <TextInput style={styles.input}
-           value={password}
-           onChange={setPassword}
-           placeholder="Retype Password"
+           value={confirmpassword}
+           onChangeText={(text) => setConfirmPassword(text)}
+           placeholder="**********"
            autoCapitalize="none"
            secureTextEntry={true}
            >
           </TextInput>
        </View>
+
+      {/* Display error message */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
 
        <TouchableOpacity className="bg-orange-200 rounded-xl px-20 py-2" 
        onPress={confirmSignUp}>
@@ -102,11 +146,13 @@ export default function SignUpScreen({ name, setName, email, setEmail, password,
   );
 }
 
+export default SignUpScreen
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifycontent: 'center',
-    alignitems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: "E0E7FF",
     padding: 20,
   },
@@ -126,6 +172,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingTop: 10,
   },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+  },
   googleButton: {
     borderColor: '#DDDDDD',
     borderWidth: 1,
@@ -143,10 +193,3 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
 })
-
-// const MyTextInput = ({label, ...props}) => {
-//   return (<View>
-//     <StyledInputLabel>{label}</StyledInputLabel>
-//     <StyledTextInput>{...props}</StyledTextInput>
-//   </View>)
-// }

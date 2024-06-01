@@ -24,6 +24,7 @@ const Login = ({ navigation }) => {
   const auth = FIREBASE_AUTH;
   
   async function confirmLogin() {
+    setLoading(true);
     try {
       console.log("Logging in...");
       await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
@@ -32,6 +33,8 @@ const Login = ({ navigation }) => {
     } catch (error) {
       console.error("Error logging in:", error.message);
       // Handle error - display error message to user
+    } finally {
+      setLoading(false);
     }
   }
 

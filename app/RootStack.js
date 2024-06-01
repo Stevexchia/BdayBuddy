@@ -9,6 +9,7 @@ import Start from "./screens/startscreen";
 import Login from "./screens/login";
 import Signup from "./screens/signup";
 import Home from "./auth_screens/homescreen"
+import Hobby from "./auth_screens/hobbyscreen"
 
 //React Navigation Stack
 import { NavigationContainer } from '@react-navigation/native';
@@ -36,6 +37,7 @@ function RootStack() {
                 <stack.Screen name="Login" component={Login} />
                 <stack.Screen name="Signup" component={Signup} />
                 <stack.Screen name="Home" component={Home} />
+                <stack.Screen name="Hobby" component={Hobby} />
             </stack.Navigator>
     );
 }
