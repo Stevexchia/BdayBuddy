@@ -2,7 +2,7 @@ import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, S
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { collection, addDoc } from 'firebase/firestore'
 
 //icons
@@ -25,6 +25,7 @@ const SignUpScreen = ({ navigation }) => {
   const [error, setError] = useState('');
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
+  const provider = new GoogleAuthProvider();
 
   async function confirmSignUp() {
     setLoading(true);
@@ -41,18 +42,15 @@ const SignUpScreen = ({ navigation }) => {
       const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
       const user = userCredential.user;
 
-      console.log("Name:", name);
-
       await addDoc(collection(db, "users"), {
         name: name,
         email: email
       });
-      console.log("Document written with ID", user.uid)
 
       console.log("Sign Up successful!");
       navigation.navigate("Hobby");
     } catch (error) {
-      console.error("Error logging in:", error.message);
+      console.error("Error Signing Up:", error.message);
       // Handle error - display error message to user
       setError(error.message);
     } finally {
@@ -66,10 +64,17 @@ const SignUpScreen = ({ navigation }) => {
     navigation.navigate("Login")
   }
  
-  function googleSignup() {
+  async function googleSignup() {
+    try {
     console.log("Signup with Google");
     //google login authentication
+  } catch(error) {
+    console.error("Error logging in with Google", error.message);
+    setError(error.message);
+  } finally {
+    setLoading(false);
   }
+};
 
   return (
     <SafeAreaView className="bg-indigo-300 flex-1 items-center gap-3 justify-center"> 
