@@ -2,7 +2,7 @@ import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, S
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 //formik
 import { Formik } from 'formik';
@@ -14,7 +14,7 @@ import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
 //keyboard avoiding wrapper
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
+import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
 
 //***APP CODE STARTS BELOW***
 const Login = ({ navigation }) => {
@@ -22,6 +22,7 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
+  const provider = new GoogleAuthProvider();
   
   async function confirmLogin() {
     setLoading(true);
@@ -47,6 +48,26 @@ const Login = ({ navigation }) => {
   function googleLogin() {
     console.log("Login with Google");
     //google login authentication
+    signInWithPopup(FIREBASE_AUTH, provider)
+    signInWithPopup(FIREBASE_AUTH, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
   }
   
   return (

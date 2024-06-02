@@ -6,7 +6,7 @@ import LoginScreen from "./screens/login";
 import SignUpScreen from "./screens/signup";
 
 //React Navigation Stack
-import RootStack from './RootStack';
+import RootStack from './RootStack.js';
 
 export default function App() {
     return <RootStack />;

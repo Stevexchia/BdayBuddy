@@ -12,7 +12,7 @@ import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
 //keyboard avoiding wrapper
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
+import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
 
 //***APP CODE STARTS BELOW***
 
