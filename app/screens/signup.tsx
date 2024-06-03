@@ -2,7 +2,7 @@ import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, S
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { collection, addDoc, doc, setDoc } from 'firebase/firestore'
 
 //icons
@@ -57,6 +57,7 @@ const SignUpScreen = ({ navigation }) => {
       });
 
       console.log("Sign Up successful!");
+      setPersistence(FIREBASE_AUTH, browserLocalPersistence)
       navigation.navigate("Hobby");
     } catch (error) {
       console.error("Error Signing Up:", (error as Error).message);

@@ -19,3 +19,6 @@ const firebaseConfig = {
 export const FIREBASE_APP = initializeApp(firebaseConfig);
 export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export const FIREBASE_DB = getFirestore(FIREBASE_APP);
+
+//IOS: 209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com
+//Android: 209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com

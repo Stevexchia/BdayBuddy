@@ -2,7 +2,8 @@ import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, S
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
+import * as Google from "expo-auth-session/providers/google";
 
 //formik
 import { Formik } from 'formik';
@@ -22,8 +23,7 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
-  const provider = new GoogleAuthProvider();
-  
+
   async function confirmLogin() {
     setLoading(true);
     try {
@@ -45,31 +45,28 @@ const Login = ({ navigation }) => {
     navigation.navigate("Signup")
   }
   
-  function googleLogin() {
-    console.log("Login with Google");
-    //google login authentication
-    signInWithPopup(FIREBASE_AUTH, provider)
-    signInWithPopup(FIREBASE_AUTH, provider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-  }
-  
+  //google authentication
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
+    androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(FIREBASE_AUTH, credential)
+        .then((userCredential) => {
+          console.log('Google sign-in successful!', userCredential.user);
+          navigation.navigate("Home");
+        })
+        .catch((error) => {
+          console.error('Error during Google sign-in', error);
+        });
+    }
+  }, [response]);
+  //end of google authentication
+
   return (
    <SafeAreaView className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
       <Text className="text-3xl font-bold">Welcome to BdayBuddy!</Text>
@@ -103,7 +100,8 @@ const Login = ({ navigation }) => {
        </TouchableOpacity>
        <View style={styles.line}></View>
 
-       <TouchableOpacity style={styles.googleButton} onPress={googleLogin}>
+       <TouchableOpacity style={styles.googleButton} 
+       onPress={() => promptAsync()}>
        <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
         /> 
