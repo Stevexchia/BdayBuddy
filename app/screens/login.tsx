@@ -36,7 +36,7 @@ WebBrowser.maybeCompleteAuthSession();
       console.log("Logging in...");
       await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       console.log("Login successful!");
-      navigation.navigate("Home");
+      navigation.navigate("Hobby");
     } catch (error) {
       console.error("Error logging in:", (error as Error).message);
       // Handle error - display error message to user

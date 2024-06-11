@@ -68,9 +68,10 @@ const HobbyScreen = () => {
         keyExtractor = {(item, index) => index.toString()}
       />
       <TouchableOpacity className="bg-orange-200 py-2 px-4 rounded-xl border-2 border-orange-300 my-24"
-      onPress={() => Alert.alert('Saved Successfully!')}>
+      onPress={() => navigation.navigate("Home")}>
         <Text className="font-semibold text-base">Save!</Text>
       </TouchableOpacity>
+      {/* navigation.navigate("Home") */}
     </SafeAreaView>
   );
 };
