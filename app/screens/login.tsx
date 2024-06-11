@@ -2,7 +2,10 @@ import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, S
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithCredential, User } from 'firebase/auth';
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from 'expo-web-browser';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //formik
 import { Formik } from 'formik';
@@ -14,7 +17,7 @@ import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
 //keyboard avoiding wrapper
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
+import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
 
 //***APP CODE STARTS BELOW***
 const Login = ({ navigation }) => {
@@ -22,7 +25,11 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
-  
+  const [userInfo, setUserInfo] = React.useState<User | undefined>(undefined);
+
+  //initialising web browser
+WebBrowser.maybeCompleteAuthSession();
+
   async function confirmLogin() {
     setLoading(true);
     try {
@@ -44,11 +51,57 @@ const Login = ({ navigation }) => {
     navigation.navigate("Signup")
   }
   
-  function googleLogin() {
-    console.log("Login with Google");
-    //google login authentication
-  }
-  
+  //google authentication
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
+    androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+  });
+
+  React.useEffect(() => {
+    if (response?.type == "success") {
+        const { id_token } = response.params;
+        const credential = GoogleAuthProvider.credential(id_token);
+        signInWithCredential(FIREBASE_AUTH, credential);
+    }
+}, [response])
+
+const checkLocalUser = async () => {
+    try {
+        setLoading(true);
+        const userJSON = await AsyncStorage.getItem("@user")
+        const userData = userJSON ? JSON.parse(userJSON) : null;
+        console.log("local storage:", userData);
+        setUserInfo(userData);
+    } catch(error) {
+        alert((error as Error).message);
+    } finally {
+        setLoading(false);
+    }
+};
+
+React.useEffect(() => {
+    checkLocalUser();
+    const unsub = onAuthStateChanged(FIREBASE_AUTH, async (user) => {
+      if (user) {
+        console.log(JSON.stringify(user, null, 2));
+        setUserInfo(user);
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
+      } else {
+        console.log("User is not authenticated");
+        setUserInfo(undefined);
+      }
+    });
+
+    return () => unsub();
+}, []);
+
+if (loading) return ( 
+<View style={{flex: 1, alignItems: 'center', justifyContent: "center" }}>
+    <ActivityIndicator size={"large"} />
+</View>
+);
+  //end of google authentication
+
   return (
    <SafeAreaView className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
       <Text className="text-3xl font-bold">Welcome to BdayBuddy!</Text>
@@ -82,7 +135,8 @@ const Login = ({ navigation }) => {
        </TouchableOpacity>
        <View style={styles.line}></View>
 
-       <TouchableOpacity style={styles.googleButton} onPress={googleLogin}>
+       <TouchableOpacity style={styles.googleButton} 
+       onPress={() => promptAsync()}>
        <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
         /> 

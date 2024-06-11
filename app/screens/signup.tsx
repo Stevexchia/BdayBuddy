@@ -1,9 +1,12 @@
 import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView } from "react-native";
-import React, { useState, useEffect } from 'react'
-import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig'
+import React, { useState, useEffect } from 'react';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { useAnimatedKeyboard } from 'react-native-reanimated';
-import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { collection, addDoc, doc, setDoc } from 'firebase/firestore'
+import { GoogleAuthProvider, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, signInWithCredential, User, onAuthStateChanged } from 'firebase/auth';
+import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from 'expo-web-browser';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //icons
 import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -12,7 +15,7 @@ import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
 //keyboard avoiding wrapper
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper'
+import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
 
 //***APP CODE STARTS BELOW***
 
@@ -26,6 +29,10 @@ const SignUpScreen = ({ navigation }) => {
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
   const provider = new GoogleAuthProvider();
+  const [userInfo, setUserInfo] = React.useState<User | undefined>(undefined);
+
+  //initialising web browser
+WebBrowser.maybeCompleteAuthSession();
 
   async function confirmSignUp() {
     setLoading(true);
@@ -57,6 +64,7 @@ const SignUpScreen = ({ navigation }) => {
       });
 
       console.log("Sign Up successful!");
+      setPersistence(FIREBASE_AUTH, browserLocalPersistence)
       navigation.navigate("Hobby");
     } catch (error) {
       console.error("Error Signing Up:", (error as Error).message);
@@ -73,18 +81,57 @@ const SignUpScreen = ({ navigation }) => {
     navigation.navigate("Login")
   }
  
-  async function googleSignup() {
-    try {
-    console.log("Signup with Google");
-    //google login authentication
+//google authentication
+const [request, response, promptAsync] = Google.useAuthRequest({
+  iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
+  androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+});
+
+React.useEffect(() => {
+  if (response?.type == "success") {
+      const { id_token } = response.params;
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(FIREBASE_AUTH, credential);
+  }
+}, [response])
+
+const checkLocalUser = async () => {
+  try {
+      setLoading(true);
+      const userJSON = await AsyncStorage.getItem("@user")
+      const userData = userJSON ? JSON.parse(userJSON) : null;
+      console.log("local storage:", userData);
+      setUserInfo(userData);
   } catch(error) {
-    console.error("Error logging in with Google", (error as Error).message);
-    setError((error as Error).message);
+      alert((error as Error).message);
   } finally {
-    setLoading(false);
+      setLoading(false);
   }
 };
 
+React.useEffect(() => {
+  checkLocalUser();
+  const unsub = onAuthStateChanged(FIREBASE_AUTH, async (user) => {
+    if (user) {
+      console.log(JSON.stringify(user, null, 2));
+      setUserInfo(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+    } else {
+      console.log("User is not authenticated");
+      setUserInfo(undefined);
+    }
+  });
+
+  return () => unsub();
+}, []);
+
+if (loading) return ( 
+<View style={{flex: 1, alignItems: 'center', justifyContent: "center" }}>
+  <ActivityIndicator size={"large"} />
+</View>
+);
+//end of google authentication
+  
   return (
     <SafeAreaView className="bg-indigo-300 flex-1 items-center gap-3 justify-center"> 
        <Image className="flex w-20 h-20"
@@ -150,7 +197,7 @@ const SignUpScreen = ({ navigation }) => {
 
        <View style={styles.line}></View>
 
-       <TouchableOpacity style={styles.googleButton} onPress={googleSignup}>
+       <TouchableOpacity style={styles.googleButton} onPress={() => promptAsync()}>
        <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
         /> 
