@@ -9,7 +9,7 @@ const Item = ({hobby}: HobbyProps) => (
   </View> 
 );
 
-const HobbyScreen = () => {
+const HobbyScreen = ({ navigation }) => {
   const [hobbies, setHobbies] = useState([
     { hobby: 'Dance 💃', selected: false },
     { hobby: 'Crochet 🧶', selected: false },
@@ -71,7 +71,6 @@ const HobbyScreen = () => {
       onPress={() => navigation.navigate("Home")}>
         <Text className="font-semibold text-base">Save!</Text>
       </TouchableOpacity>
-      {/* navigation.navigate("Home") */}
     </SafeAreaView>
   );
 };
