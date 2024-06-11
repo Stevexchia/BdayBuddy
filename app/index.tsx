@@ -21,6 +21,5 @@ import RootStack from './RootStack.js';
 import { ActivityIndicator, View } from "react-native";
 
 export default function App() {
-    // return <RootStack />;
-    return <HobbyScreen />;
+    return <RootStack />;
 } 
