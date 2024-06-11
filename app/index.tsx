@@ -12,12 +12,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import StartScreen from "./screens/startscreen";
 import LoginScreen from "./screens/login";
 import SignUpScreen from "./screens/signup";
+
 import HomeScreen from "./auth_screens/homescreen";
+import HobbyScreen from "./auth_screens/hobbyscreen";
 
 //React Navigation Stack
 import RootStack from './RootStack.js';
 import { ActivityIndicator, View } from "react-native";
 
 export default function App() {
-    return <RootStack />;
+    // return <RootStack />;
+    return <HobbyScreen />;
 } 
