@@ -65,7 +65,7 @@ WebBrowser.maybeCompleteAuthSession();
 
       console.log("Sign Up successful!");
       setPersistence(FIREBASE_AUTH, browserLocalPersistence)
-      navigation.navigate("Hobby");
+      navigation.navigate("Hobby", { userId: user.uid });
     } catch (error) {
       console.error("Error Signing Up:", (error as Error).message);
       // Handle error - display error message to user

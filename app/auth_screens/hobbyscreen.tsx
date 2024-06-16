@@ -1,5 +1,7 @@
 import { Text, View, SafeAreaView, TouchableOpacity, Alert, StyleSheet, FlatList, Button } from "react-native";
-import React, { useState } from 'react'
+import React, { useState } from 'react' 
+import { FIREBASE_DB } from "../../FirebaseConfig"
+import { collection, addDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
 
 type HobbyProps = {hobby: string};
 
@@ -9,7 +11,13 @@ const Item = ({hobby}: HobbyProps) => (
   </View> 
 );
 
-const HobbyScreen = ({ navigation }) => {
+type HobbyScreenProps = {
+  navigation: any;
+  route: { params: { userId: string } };
+};
+
+const HobbyScreen = ({ navigation, route }) => {
+  const { userId } = route.params; //
   const [hobbies, setHobbies] = useState([
     { hobby: 'Dance 💃', selected: false },
     { hobby: 'Crochet 🧶', selected: false },
@@ -50,6 +58,20 @@ const HobbyScreen = ({ navigation }) => {
     setHobbies(updatedHobbies);
   };
 
+  const saveHobbiesToFirestore = async () => {
+    const selectedHobbies = hobbies.filter(hobby => hobby.selected).map(hobby => hobby.hobby);
+    try {
+      const userDocRef = doc(FIREBASE_DB, 'users', userId);
+      await updateDoc(userDocRef, { hobbies: selectedHobbies });
+
+      Alert.alert('Success', 'Hobbies saved successfully!');
+      navigation.navigate('Home');  // Navigate to Home screen after saving
+    } catch (error) {
+      console.error('Error saving hobbies: ', error);
+      Alert.alert('Error', 'There was an error saving your hobbies. Please try again.');
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-300 items-center gap-4">
        <Text className="text-xl text-center font-bold">What are some of your favourite hobbies and interests?</Text>
@@ -68,7 +90,7 @@ const HobbyScreen = ({ navigation }) => {
         keyExtractor = {(item, index) => index.toString()}
       />
       <TouchableOpacity className="bg-orange-200 py-2 px-4 rounded-xl border-2 border-orange-300 my-24"
-      onPress={() => navigation.navigate("Home")}>
+      onPress={saveHobbiesToFirestore}>
         <Text className="font-semibold text-base">Save!</Text>
       </TouchableOpacity>
     </SafeAreaView>
