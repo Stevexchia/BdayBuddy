@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView, Pressable} from "react-native";
 import React, { useState, useEffect } from 'react';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { useAnimatedKeyboard } from 'react-native-reanimated';
@@ -7,6 +7,8 @@ import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import DateTimePicker from "@react-native-community/datetimepicker"
 
 //icons
 import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -22,6 +24,19 @@ import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mj
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [dob, setDOB] = useState('');
+  const [showPicker, setShowPicker] = useState('false');
+  const toggleDatepicker = () => {
+    setShowPicker(!showPicker);
+  };
+  const onChange = ({ type }, selectedDate) => {
+    if (type == "set") {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+    } else {
+      toggleDatepicker();
+    }
+  };
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,6 +54,11 @@ WebBrowser.maybeCompleteAuthSession();
     setError('');
     if (!name.trim()) {
       setError('Please enter your name.');
+      setLoading(false);
+      return;
+    }
+    if (!dob.trim()) {
+      setError('Please enter your date of birth.');
       setLoading(false);
       return;
     }
@@ -83,8 +103,12 @@ WebBrowser.maybeCompleteAuthSession();
  
 //google authentication
 const [request, response, promptAsync] = Google.useAuthRequest({
-  iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
-  androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+  webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
+    androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+    redirectUri: makeRedirectUri({
+      useProxy: true,
+      native: 'BdayBuddy://redirect', 
+    }),
 });
 
 React.useEffect(() => {
@@ -158,6 +182,28 @@ if (loading) return (
            autoCapitalize="none"
            >
           </TextInput>
+       </View>
+
+       <View>
+         <Text className="justify-start p-1">Date of Birth</Text>
+
+         {showPicker && (
+            <DateTimePicker
+              mode="date"
+              display="spinner"
+              value={date}
+              onChange={onChange}
+            />
+         )}
+      <Pressable>
+         <TextInput style={styles.input}
+           value={dob}
+           onChangeText={(text) => setDOB(text)}
+           placeholder="DD-MM-YYYY"
+           autoCapitalize="none"
+           >
+          </TextInput>
+        </Pressable>
        </View>
 
        <View>
