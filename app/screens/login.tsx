@@ -53,8 +53,7 @@ WebBrowser.maybeCompleteAuthSession();
   
   //google authentication
   const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
-    androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+    webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
   });
 
   React.useEffect(() => {
