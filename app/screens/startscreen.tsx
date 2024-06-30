@@ -12,25 +12,47 @@ export default function StartScreen({ navigation }) {
   function handleSignUp() {
     console.log("Sign Up");
     navigation.navigate("Signup")
-    // SignUpScreen();
   }
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-indigo-300"> 
-       <Image className="flex"
-          source={require('@/assets/images/bdaybuddy-logo.png')}
-        />
-       <Text className="text-4xl font-extrabold py-4 text-[#294865]">BDAYBUDDY</Text>
-       <TouchableOpacity className="bg-orange-200 rounded-xl shadow px-12 py-2" onPress={handleLogin}>
-         <Text className="text-xl font-bold text-[#294865]">Login</Text>
-       </TouchableOpacity>
-       <Text> </Text>
-       <TouchableOpacity className="bg-orange-200 rounded-xl shadow px-9 py-2" onPress={handleSignUp}>
-         <Text className="text-xl font-bold text-[#294865]">Sign Up</Text>
-       </TouchableOpacity>
-    </SafeAreaView>
+    <View className="flex-1 items-center bg-indigo-300">
+      <Image className="mb-2"
+        source={require('@/assets/images/bdaybuddy-banner.png')}
+      />
+      <Text style = {styles.title}>BDAYBUDDY</Text>
+      <TouchableOpacity style = {styles.button} onPress={handleLogin}>
+        <Text style = {styles.buttontext}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style = {styles.button} onPress={handleSignUp}>
+        <Text style = {styles.buttontext}>Sign Up</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-
-
+const styles = StyleSheet.create({
+  title: {
+    fontFamily: 'Cherry',
+    color: '#294865',
+    fontSize: 48,
+    marginBottom: 14,
+  },
+  button: {
+    backgroundColor: '#F9DECA',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 150,
+    padding: 10,
+    marginBottom: 16,
+    shadowRadius: 1,
+    elevation: 1,
+    shadowOpacity: 0.1,
+  },
+  buttontext: {
+    fontFamily: 'Ubuntu-Medium',
+    color: '#294865',
+    fontSize: 20,
+  }
+})

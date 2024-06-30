@@ -104,7 +104,7 @@ if (loading) return (
 
   return (
    <SafeAreaView className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
-      <Text className="text-3xl font-bold">Welcome to BdayBuddy!</Text>
+      <Text className="text-3xl font-ubuntuMed">Welcome to BdayBuddy!</Text>
        <Image className="flex w-20 h-20"
           source={require('@/assets/images/bdaybuddy-logo.png')}
         />
@@ -125,13 +125,12 @@ if (loading) return (
           secureTextEntry={true}
           />
 
-       <TouchableOpacity className="bg-orange-200 rounded-xl px-20 py-2" 
-       onPress={confirmLogin}>
-         <Text className="text-xl font-bold">Login</Text>
+       <TouchableOpacity style = {styles.loginButton} onPress={confirmLogin}>
+         <Text style = {styles.buttontext}>Login</Text>
        </TouchableOpacity>
 
-       <TouchableOpacity className="border-2 border-orange-200 rounded-xl shadow p-2 px-4" onPress={handleSignUp}>
-        <Text className="text-white font-bold shadow">No account? Sign up now!</Text>
+       <TouchableOpacity style = {styles.signupButton} onPress={handleSignUp}>
+        <Text className="text-white font-ubuntuMed shadow px-1">No account? Sign up now!</Text>
        </TouchableOpacity>
        <View style={styles.line}></View>
 
@@ -140,7 +139,7 @@ if (loading) return (
        <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
         /> 
-        <Text className="text-black font-bold shadow">Continue with Google</Text>
+        <Text className="text-black font-ubuntuMed shadow">Continue with Google</Text>
        </TouchableOpacity>
 
     </SafeAreaView>
@@ -152,6 +151,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   input: {
+    fontFamily: 'Ubuntu-Regular',
     borderWidth: 1,
     borderColor: '#777',
     backgroundColor: '#FFFFEE',
@@ -160,7 +160,8 @@ const styles = StyleSheet.create({
     width: 240,
   },
   subtitle: {
-    fontSize: 30,
+    fontFamily: 'Ubuntu-Medium',
+    fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -170,6 +171,30 @@ const styles = StyleSheet.create({
     width: '50%',
     marginBottom: 10,
     paddingTop: 10,
+  },
+  loginButton: {
+    backgroundColor: '#F9DECA',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 200,
+    padding:10,
+    shadowRadius: 1,
+    elevation: 1,
+    shadowOpacity: 0.1,
+  },
+  signupButton: {
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#F9DECA',
+    alignItems: 'center',
+    width: 200,
+    padding: 10,
+  },
+  buttontext: {
+    fontFamily: 'Ubuntu-Medium',
+    color: '#294865',
+    fontSize: 20,
   },
   googleButton: {
     borderColor: '#DDDDDD',

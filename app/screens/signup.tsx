@@ -137,9 +137,9 @@ if (loading) return (
        <Image className="flex w-20 h-20"
           source={require('@/assets/images/bdaybuddy-logo.png')}
         />
-       <Text className="text-lg font-bold">Account Sign Up</Text>
+       <Text className="text-xl font-ubuntuMed">Account Sign Up</Text>
        <View>
-         <Text className="justify-start p-1">Name</Text>
+         <Text className="justify-start font-ubuntuReg p-1">Name</Text>
          <TextInput style={styles.input}
            value={name}
            onChangeText={(text) => setName(text)}
@@ -150,7 +150,7 @@ if (loading) return (
        </View>
 
        <View>
-         <Text className="justify-start p-1">Email</Text>
+         <Text className="justify-start font-ubuntuReg p-1">Email</Text>
          <TextInput style={styles.input}
            value={email}
            onChangeText={(text) => setEmail(text)}
@@ -161,7 +161,7 @@ if (loading) return (
        </View>
 
        <View>
-         <Text className="justify-start p-1">Password</Text>
+         <Text className="justify-start font-ubuntuReg p-1">Password</Text>
          <TextInput style={styles.input}
            value={password}
            onChangeText={(text) => setPassword(text)}
@@ -173,7 +173,7 @@ if (loading) return (
        </View>
 
        <View>
-         <Text className="justify-start p-1">Confirm Password</Text>
+         <Text className="justify-start font-ubuntuReg p-1">Confirm Password</Text>
          <TextInput style={styles.input}
            value={confirmpassword}
            onChangeText={(text) => setConfirmPassword(text)}
@@ -187,12 +187,13 @@ if (loading) return (
       {/* Display error message */}
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-       <TouchableOpacity className="bg-orange-200 rounded-xl px-20 py-2" 
+       <TouchableOpacity style = {styles.signupButton} 
        onPress={confirmSignUp}>
-         <Text className="text-xl font-bold">Sign Up</Text>
+         <Text style = {styles.buttontext}>Sign Up</Text>
        </TouchableOpacity>
-       <TouchableOpacity className="border-2 border-orange-200 rounded-xl shadow p-2 px-4" onPress={handleLogin}>
-        <Text className="text-white font-bold shadow">Already have an account? Login</Text>
+       <TouchableOpacity style = {styles.loginButton} onPress={handleLogin}>
+        <Text className="text-white font-ubuntuMed shadow"
+        >Already have an account? Login</Text>
        </TouchableOpacity>
 
        <View style={styles.line}></View>
@@ -201,7 +202,7 @@ if (loading) return (
        <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
         /> 
-        <Text className="text-black font-bold shadow">Sign in with Google</Text>
+        <Text className="text-black font-ubuntuMed shadow">Sign in with Google</Text>
        </TouchableOpacity>
     </SafeAreaView>
   );
@@ -219,6 +220,7 @@ const styles = StyleSheet.create({
   },
   
   input: {
+    fontFamily: 'Ubuntu-Regular',
     borderWidth: 1,
     borderColor: '#777',
     backgroundColor: '#FFFFEE',
@@ -236,6 +238,30 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginBottom: 10,
+  },
+  signupButton: {
+    backgroundColor: '#F9DECA',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 240,
+    padding: 10,
+    shadowRadius: 1,
+    elevation: 1,
+    shadowOpacity: 0.1,
+  },
+  loginButton: {
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#F9DECA',
+    alignItems: 'center',
+    width: 240,
+    padding: 10,
+  },
+  buttontext: {
+    fontFamily: 'Ubuntu-Medium',
+    color: '#294865',
+    fontSize: 20,
   },
   googleButton: {
     borderColor: '#DDDDDD',
