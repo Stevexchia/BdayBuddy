@@ -35,7 +35,8 @@ WebBrowser.maybeCompleteAuthSession();
     setLoading(true);
     try {
       console.log("Logging in...");
-      const user = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const uid = userCredential.user.uid;
       console.log("Login successful!");
       navigation.navigate("Hobby", { userId: user.uid });
     } catch (error) {
