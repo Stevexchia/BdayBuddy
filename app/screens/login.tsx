@@ -38,7 +38,7 @@ WebBrowser.maybeCompleteAuthSession();
       const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       const uid = userCredential.user.uid;
       console.log("Login successful!");
-      navigation.navigate("Hobby", { userId: user.uid });
+      navigation.navigate("Home", { userId: uid });
     } catch (error) {
       console.error("Error logging in:", (error as Error).message);
       // Handle error - display error message to user
@@ -55,9 +55,9 @@ WebBrowser.maybeCompleteAuthSession();
   
   //google authentication
   const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
     iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
     androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
-    webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
     redirectUri: makeRedirectUri({
       useProxy: true,
       native: 'BdayBuddy://redirect', 
