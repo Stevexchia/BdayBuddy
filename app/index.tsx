@@ -35,5 +35,4 @@ export default function App() {
       }
     
     return <RootStack />;
-    return <HomeScreen />;
 } 

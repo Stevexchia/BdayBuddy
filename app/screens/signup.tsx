@@ -7,6 +7,8 @@ import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import DateTimePicker from "@react-native-community/datetimepicker"
 
 //icons
 import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -65,7 +67,7 @@ WebBrowser.maybeCompleteAuthSession();
 
       console.log("Sign Up successful!");
       setPersistence(FIREBASE_AUTH, browserLocalPersistence)
-      navigation.navigate("Hobby");
+      navigation.navigate("Hobby", { userId: user.uid });
     } catch (error) {
       console.error("Error Signing Up:", (error as Error).message);
       // Handle error - display error message to user
@@ -85,6 +87,11 @@ WebBrowser.maybeCompleteAuthSession();
 const [request, response, promptAsync] = Google.useAuthRequest({
   iosClientId:'209106502578-q5b8hf7bn2sm4glksgis5b13p97t9gsi.apps.googleusercontent.com',
   androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+  webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
+  redirectUri: makeRedirectUri({
+    useProxy: true,
+    native: 'BdayBuddy://redirect', 
+  }),
 });
 
 React.useEffect(() => {
