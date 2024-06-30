@@ -8,9 +8,9 @@ const { primary, tertiary } = Colors;
 import Start from "./screens/startscreen";
 import Login from "./screens/login";
 import Signup from "./screens/signup";
-import Home from "./auth_screens/homescreen"
-import Hobby from "./auth_screens/hobbyscreen"
-import Bday from "./auth_screens/bdayscreen"
+import Home from "./screens/homescreen"
+import Hobby from "./screens/hobbyscreen"
+import Bday from "./screens/bdayscreen"
 
 //React Navigation Stack
 import { NavigationContainer } from '@react-navigation/native';

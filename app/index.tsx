@@ -13,8 +13,8 @@ import StartScreen from "./screens/startscreen";
 import LoginScreen from "./screens/login";
 import SignUpScreen from "./screens/signup";
 
-import HomeScreen from "./auth_screens/homescreen";
-import HobbyScreen from "./auth_screens/hobbyscreen";
+import HomeScreen from "./screens/homescreen";
+import HobbyScreen from "./screens/hobbyscreen";
 
 //React Navigation Stack
 import RootStack from './RootStack.js';

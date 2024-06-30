@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sig
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 
 //formik
 import { Formik } from 'formik';
@@ -34,9 +35,10 @@ WebBrowser.maybeCompleteAuthSession();
     setLoading(true);
     try {
       console.log("Logging in...");
-      await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const uid = userCredential.user.uid;
       console.log("Login successful!");
-      navigation.navigate("Hobby");
+      navigation.navigate('Hobby', { userId: uid });
     } catch (error) {
       console.error("Error logging in:", (error as Error).message);
       // Handle error - display error message to user
@@ -54,6 +56,11 @@ WebBrowser.maybeCompleteAuthSession();
   //google authentication
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: '209106502578-c0h0vshlvbm9nv0hpjrfbbkjmp0f1chj.apps.googleusercontent.com',
+    androidClientId: '209106502578-2hpqmn9a987e8bu33n14diuber8e1kj7.apps.googleusercontent.com',
+    redirectUri: makeRedirectUri({
+      useProxy: true,
+      native: 'BdayBuddy://redirect', 
+    }),
   });
 
   React.useEffect(() => {
