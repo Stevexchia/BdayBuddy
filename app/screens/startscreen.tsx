@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
     width: 150,
     padding: 10,
     marginBottom: 16,
-    shadowRadius: 1,
-    elevation: 1,
-    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: {width:0, height:0},
+    shadowOpacity: 0.15,
   },
   buttontext: {
     fontFamily: 'Ubuntu-Medium',

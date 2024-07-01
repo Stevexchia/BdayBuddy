@@ -124,8 +124,8 @@ export default function HomeScreen() {
           theme={{
             agendaDayTextColor: '#2d4150',
             agendaDayNumColor: '#2d4150',
-            // agendaTodayColor: '#86c8fa',
-            // agendaKnobColor: '#F9DECA',
+            agendaTodayColor: '#86c8fa',
+            agendaKnobColor: '#F9DECA',
             backgroundColor: '#f0f4f7',
             calendarBackground: '#ffffff',
             dayTextColor: '#2d4150',
@@ -143,14 +143,14 @@ export default function HomeScreen() {
           }}
           style={styles.calendar}
         />
-        <View className="flex-row items-center space-x-7">
+        <View className="flex-row items-center space-x-11">
           <View className="flex-row gap-2">
             <Ionicons name="people-outline" size={28} color="black" />
             <Text className="text-lg font-ubuntuMed">Friends</Text>
           </View>
 
 
-          <TouchableOpacity style={styles.Button} onPress={addBirthday}>
+          <TouchableOpacity style={styles.button} onPress={addBirthday}>
             <Ionicons name="heart-circle" size={28} color='#8DB1F4' />
             <Text className="text-base font-ubuntuReg">Add a new Occasion!</Text>
           </TouchableOpacity>
@@ -178,12 +178,9 @@ export default function HomeScreen() {
                   mode='calendar'
                   selected={date}
                   onDateChanged={handleChange}
-                  options={{
-                    textHeaderFontSize: 15, // Change this to your desired header font size
-                    textDefaultFontSize: 10, // Change this to your desired default text font size
-                  }}>
+                  >
                 </DatePicker>
-                <TouchableOpacity style={styles.Button} onPress={handleSelectedDate}>
+                <TouchableOpacity style={styles.button} onPress={handleSelectedDate}>
                   <Text className="text-base font-ubuntuMed">Save</Text>
                   <Ionicons name="checkmark-circle" size={28} color='#8DB1F4' />
                 </TouchableOpacity>
@@ -223,7 +220,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 8,
   },
-  Button: {
+  button: {
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     borderRadius: 12,
@@ -256,11 +253,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: 340,
     marginBottom: 20,
-    height: 200,
+    height: 230,
   },
   contacts: {
     padding: 20,
-    width: 360,
+    width: 365,
     height: 150,
   },
   contactItem: {
@@ -277,7 +274,6 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
     marginTop: 22,
   },
   modalView: {
@@ -285,7 +281,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     width: '90%',
-    padding: 36,
+    padding: 25,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.2,

@@ -36,4 +36,5 @@ export default function App() {
       }
     return <Profile />;
     return <RootStack />;
+    return <HomeScreen />;
 } 

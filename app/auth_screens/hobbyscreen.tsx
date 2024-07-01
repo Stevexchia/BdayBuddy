@@ -1,15 +1,16 @@
-import { Text, View, SafeAreaView, TouchableOpacity, Alert, StyleSheet, FlatList, Button } from "react-native";
-import React, { useState } from 'react' 
+import { Text, View, SafeAreaView, TouchableOpacity, Alert, StyleSheet, FlatList } from "react-native";
+import React, { useState } from 'react'
+import { Ionicons } from "@expo/vector-icons";
 import { FIREBASE_DB } from "../../FirebaseConfig"
 import { collection, addDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from "@expo/vector-icons";
 
-type HobbyProps = {hobby: string};
+type HobbyProps = { hobby: string };
 
-const Item = ({hobby}: HobbyProps) => (
+const Item = ({ hobby }: HobbyProps) => (
   <View>
     <Text>{hobby}</Text>
-  </View> 
+  </View>
 );
 
 type HobbyScreenProps = {
@@ -52,8 +53,8 @@ const HobbyScreen = ({ navigation, route }) => {
   const onSelect = (ind: number) => {
     const updatedHobbies = hobbies.map((hobby, index) => {
       if (index == ind) {
-        return { ...hobby, selected:!hobby.selected };
-      } 
+        return { ...hobby, selected: !hobby.selected };
+      }
       return hobby;
     });
     setHobbies(updatedHobbies);
@@ -75,20 +76,20 @@ const HobbyScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView className="flex-1 bg-indigo-300 items-center gap-4">
-       <Text className="text-xl text-center font-bold">What are some of your favourite hobbies and interests?</Text>
-       <Text className="text-lg font-bold">Select the ones that suit you best!</Text>
-      <FlatList 
-        style={{flexDirection: "row"}}
+      <Text className="text-xl text-center font-bold">What are some of your favourite hobbies and interests?</Text>
+      <Text className="text-lg font-bold">Select the ones that suit you best!</Text>
+      <FlatList
+        style={{ flexDirection: "row" }}
         numColumns={3}
         data={hobbies}
         renderItem={({ item, index }) => (
-            <TouchableOpacity className="items-center p-2 rounded-xl m-1.5"
-              style={{ backgroundColor: item.selected == true ? 'pink' : 'white'}}
-              onPress={() => { onSelect(index) }}>
-              <Text className="font-semibold text-base" >{item.hobby}</Text>
-            </TouchableOpacity>
-          )}
-        keyExtractor = {(item, index) => index.toString()}
+          <TouchableOpacity className="items-center p-2 rounded-xl m-1.5"
+            style={{ backgroundColor: item.selected == true ? 'pink' : 'white' }}
+            onPress={() => { onSelect(index) }}>
+            <Text className="font-semibold text-base" >{item.hobby}</Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item, index) => index.toString()}
       />
       <TouchableOpacity style={styles.Button} onPress={saveHobbiesToFirestore}>
                   <Text className="text-base font-ubuntuMed">Save</Text>
