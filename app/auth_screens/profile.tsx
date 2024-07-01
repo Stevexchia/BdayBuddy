@@ -10,26 +10,26 @@ const ProfileScreen = ({ }) => {
   const [userName, setUserName] = useState('John Doe');
   const [profileImageUrl, setProfileImageUrl] = useState(null); // State to hold profile image URL
 
-  // useEffect(() => {
-  //   // Fetch user data including profile image URL
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const userDoc = await FIREBASE_DB.collection('users').doc(userId).get();
+  useEffect(() => {
+    // Fetch user data including profile image URL
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await FIREBASE_DB.collection('users').doc(userId).get();
 
-  //       if (userDoc.exists()) {
-  //         const userData = userDoc.data();
-  //         setUserName(userData.name);
-  //         setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
-  //       } else {
-  //         console.log('No such document!');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //     }
-  //   };
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserName(userData.name);
+          setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
+        } else {
+          console.log('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
 
-  //   fetchUserData();
-  // }, [userId]);
+    fetchUserData();
+  }, [userId]);
 
   const handleUploadPicture = async () => {
     // Ask for permission to access camera and gallery
@@ -189,4 +189,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
 export default ProfileScreen;
