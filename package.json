@@ -68,7 +68,9 @@
     "tailwind-merge": "^2.3.0",
     "tailwind-rn": "^4.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "expo-image-picker": "~15.0.6",
+    "@react-native-community/datetimepicker": "8.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
