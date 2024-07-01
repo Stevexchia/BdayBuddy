@@ -47,17 +47,23 @@ function RootStack() {
             }}
             initialRouteName="Start"
         >
-            <stack.Screen name="Start" component={Start} />
-            <stack.Screen name="Login" component={Login} />
-            <stack.Screen name="Signup" component={Signup} />
-            <stack.Screen name="Home" component={TabNavigator} />
-            <stack.Screen name="Hobby" component={Hobby} />
+            <stack.Screen name="Start" component={Start} 
+            options={{ headerShown: false }} />
+            <stack.Screen name="Login" component={Login} 
+            options={{ headerShown: false }} />
+            <stack.Screen name="Signup" component={Signup} 
+            options={{ headerShown: false }} />
+            <stack.Screen name="Home" component={TabNavigator} 
+            options={{ headerShown: false }} />
+            <stack.Screen name="Hobby" component={Hobby} 
+            options={{ headerShown: false }} />
         </stack.Navigator>
 
     );
 }
 
-const TabNavigator = () => {
+const TabNavigator = ({ route }) => {
+    const { userId } = route.params;
     return (
         <Tab.Navigator
             initialRouteName={homeName}
@@ -86,10 +92,10 @@ const TabNavigator = () => {
                 },
             })}
         >
-            <Tab.Screen name={homeName} component={Home} />
-            <Tab.Screen name={giftName} component={Gift} />
-            <Tab.Screen name={profileName} component={Profile} />
-            <Tab.Screen name={notifName} component={Notification} />
+            <Tab.Screen name={homeName} component={Home} initialParams={{ userId }}/>
+            <Tab.Screen name={giftName} component={Gift} initialParams={{ userId }}/>
+            <Tab.Screen name={profileName} component={Profile} initialParams={{ userId }}/>
+            <Tab.Screen name={notifName} component={Notification} initialParams={{ userId }}/>
 
         </Tab.Navigator>
     );

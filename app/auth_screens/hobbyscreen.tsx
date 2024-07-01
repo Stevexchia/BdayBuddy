@@ -66,7 +66,7 @@ const HobbyScreen = ({ navigation, route }) => {
       await updateDoc(userDocRef, { hobbies: selectedHobbies });
 
       Alert.alert('Success', 'Hobbies saved successfully!');
-      navigation.navigate('Home');  // Navigate to Home screen after saving
+      navigation.navigate('Home', {userId});  // Navigate to Home screen after saving
     } catch (error) {
       console.error('Error saving hobbies: ', error);
       Alert.alert('Error', 'There was an error saving your hobbies. Please try again.');
