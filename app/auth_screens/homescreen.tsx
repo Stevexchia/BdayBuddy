@@ -32,11 +32,11 @@ export default function HomeScreen() {
     // Simulated data loading
     setTimeout(() => {
       const newItems = {
-        '2024-06-14': [],
-        '2024-06-15': [
+        '2024-07-02': [],
+        '2024-07-01': [
           { name: "Amanda's Birthday", height: 50 },
         ],
-        '2024-06-16': [
+        '2024-07-03': [
           { name: "Keith's Birthday", height: 50 },
           { name: 'Graduation', height: 50 },
         ],

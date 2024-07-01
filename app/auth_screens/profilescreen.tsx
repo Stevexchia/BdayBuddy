@@ -1,35 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert, TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { signOut } from "firebase/auth";
+import { signOut, updatePassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DB } from '@/FirebaseConfig';
 import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
 
-const ProfileScreen = ({ }) => {
-  const [userName, setUserName] = useState('Bday');
+const ProfileScreen = ({ navigation, route }) => {
+  const { userId } = route.params;
+  const [userName, setUserName] = useState('Username');
   const [profileImageUrl, setProfileImageUrl] = useState(null); // State to hold profile image URL
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showPasswordInputs, setShowPasswordInputs] = useState(false);
 
-  // useEffect(() => {
-  //   // Fetch user data including profile image URL
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const userDoc = await FIREBASE_DB.collection('users').doc(userId).get();
+  useEffect(() => {
+    // Fetch user data including profile image URL
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(FIREBASE_DB, 'users', userId)); // Correct usage of Firestore methods
 
-  //       if (userDoc.exists()) {
-  //         const userData = userDoc.data();
-  //         setUserName(userData.name);
-  //         setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
-  //       } else {
-  //         console.log('No such document!');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //     }
-  //   };
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserName(userData.name);
+          setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
+        } else {
+          console.log('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
 
-  //   fetchUserData();
-  // }, [userId]);
+    fetchUserData();
+  }, [userId]);
 
   const handleUploadPicture = async () => {
     // Ask for permission to access camera and gallery
@@ -40,7 +44,41 @@ const ProfileScreen = ({ }) => {
     }
   };
 
-  const handleLogout = async (navigation) => {
+  const handleChangePassword = () => {
+    setShowPasswordInputs(true);
+  };
+
+  const handleCancelPasswordChange = () => {
+    setShowPasswordInputs(false);
+    setNewPassword('');
+    setConfirmNewPassword('');
+  };
+
+  const handleSubmitPasswordChange = async () => {
+    if (newPassword !== confirmNewPassword) {
+      Alert.alert('Passwords do not match', 'Please make sure your passwords match.');
+      return;
+    }
+  
+    try {
+      const currentUser = FIREBASE_AUTH.currentUser;
+      if (!currentUser) {
+        console.error('User is not authenticated.');
+        return;
+      }
+
+      await updatePassword(currentUser, newPassword);
+      Alert.alert('Password Changed', 'Your password has been changed successfully.');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      setShowPasswordInputs(false);
+    } catch (error) {
+      console.error('Error changing password:', error);
+      Alert.alert('Error', 'Failed to change password. Please try again.');
+    }
+  };
+
+  const handleLogout = async () => {
     try {
       await signOut(FIREBASE_AUTH);
       Alert.alert('Logged out', 'You have been logged out successfully.');
@@ -119,10 +157,36 @@ const ProfileScreen = ({ }) => {
             <Ionicons name="alert-circle-outline" size={20} color="black" style={styles.optionIcon} />
             <Text style={styles.optionText}>Report a problem</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton} onPress={() => {/* Navigate to Change Password screen */}}>
+          <TouchableOpacity style={styles.optionButton} onPress={handleChangePassword}>
             <Ionicons name="key-outline" size={20} color="black" style={styles.optionIcon} />
             <Text style={styles.optionText}>Change Password</Text>
           </TouchableOpacity>
+          
+          {showPasswordInputs && (
+            <>
+              <TextInput
+                style={styles.passwordInput}
+                secureTextEntry
+                placeholder="New Password"
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+              <TextInput
+                style={styles.passwordInput}
+                secureTextEntry
+                placeholder="Confirm New Password"
+                value={confirmNewPassword}
+                onChangeText={setConfirmNewPassword}
+              />
+              <TouchableOpacity style={styles.submitButton} onPress={handleSubmitPasswordChange}>
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPasswordChange}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
           <TouchableOpacity style={[styles.optionButton, { borderBottomWidth: 0 }]} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="red" style={styles.optionIcon} />
             <Text style={[styles.optionText, { color: 'red' }]}>Log Out</Text>
@@ -200,6 +264,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  passwordInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  submitButton: {
+    backgroundColor: '#a1373f',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#656773',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
 });
 
 export default ProfileScreen;
