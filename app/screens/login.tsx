@@ -110,7 +110,7 @@ if (loading) return (
   //end of google authentication
 
   return (
-   <SafeAreaView className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
+   <View className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
       <Text className="text-3xl font-ubuntuMed">Welcome to BdayBuddy!</Text>
        <Image className="flex w-20 h-20"
           source={require('@/assets/images/bdaybuddy-logo.png')}
@@ -149,7 +149,7 @@ if (loading) return (
         <Text className="text-black font-ubuntuMed shadow">Continue with Google</Text>
        </TouchableOpacity>
 
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -186,9 +186,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 200,
     padding:10,
-    shadowRadius: 1,
-    elevation: 1,
-    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: {width:0, height:0},
+    shadowOpacity: 0.15,
   },
   signupButton: {
     borderWidth: 2,

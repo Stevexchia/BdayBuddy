@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 
 
-const bdayscreen = () => {
+const Bdayscreen = () => {
   return (
     <View>
       <Text>bdayscreen</Text>
@@ -10,4 +10,4 @@ const bdayscreen = () => {
   )
 }
 
-export default bdayscreen
+export default Bdayscreen

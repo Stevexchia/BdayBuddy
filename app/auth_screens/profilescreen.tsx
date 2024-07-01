@@ -3,7 +3,7 @@ import React from 'react'
 import { signOut } from "firebase/auth"
 import { FIREBASE_AUTH } from '@/FirebaseConfig'
 
-const profile = () => {
+const ProfileScreen = () => {
   return (
     <View>
       <Text>profile</Text>
@@ -13,4 +13,4 @@ const profile = () => {
   )
 }
 
-export default profile
+export default ProfileScreen
