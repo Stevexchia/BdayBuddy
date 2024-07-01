@@ -7,29 +7,29 @@ import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
 
 const ProfileScreen = ({ }) => {
-  const [userName, setUserName] = useState('John Doe');
+  const [userName, setUserName] = useState('Bday');
   const [profileImageUrl, setProfileImageUrl] = useState(null); // State to hold profile image URL
 
-  useEffect(() => {
-    // Fetch user data including profile image URL
-    const fetchUserData = async () => {
-      try {
-        const userDoc = await FIREBASE_DB.collection('users').doc(userId).get();
+  // useEffect(() => {
+  //   // Fetch user data including profile image URL
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const userDoc = await FIREBASE_DB.collection('users').doc(userId).get();
 
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserName(userData.name);
-          setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
-        } else {
-          console.log('No such document!');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+  //       if (userDoc.exists()) {
+  //         const userData = userDoc.data();
+  //         setUserName(userData.name);
+  //         setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
+  //       } else {
+  //         console.log('No such document!');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, [userId]);
+  //   fetchUserData();
+  // }, [userId]);
 
   const handleUploadPicture = async () => {
     // Ask for permission to access camera and gallery
@@ -38,6 +38,18 @@ const ProfileScreen = ({ }) => {
       Alert.alert('Permission required', 'Permission to access camera roll is required!');
       return;
     }
+  };
+
+  const handleLogout = async (navigation) => {
+    try {
+      await signOut(FIREBASE_AUTH);
+      Alert.alert('Logged out', 'You have been logged out successfully.');
+      navigation.navigate("Start");
+    } catch (error) {
+      console.error('Error logging out: ', error);
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    }
+  };
 
   return (
     <ImageBackground source={require('@/assets/images/background.png')} style={styles.backgroundImage}>
@@ -111,7 +123,7 @@ const ProfileScreen = ({ }) => {
             <Ionicons name="key-outline" size={20} color="black" style={styles.optionIcon} />
             <Text style={styles.optionText}>Change Password</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.optionButton, { borderBottomWidth: 0 }]} onPress={async () => await signOut(FIREBASE_AUTH)}>
+          <TouchableOpacity style={[styles.optionButton, { borderBottomWidth: 0 }]} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="red" style={styles.optionIcon} />
             <Text style={[styles.optionText, { color: 'red' }]}>Log Out</Text>
           </TouchableOpacity>
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'white', // Text color against the background image
+    color: 'black', // Text color against the background image
   },
   optionsContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)', // Slight white background with transparency
