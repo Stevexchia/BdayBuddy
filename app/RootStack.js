@@ -10,7 +10,6 @@ import Login from "./screens/login";
 import Signup from "./screens/signup";
 import Home from "./auth_screens/homescreen"
 import Hobby from "./auth_screens/hobbyscreen"
-import Bday from "./auth_screens/bdayscreen"
 import Gift from "./auth_screens/giftscreen"
 import Profile from "./auth_screens/profilescreen"
 import Notification from "./auth_screens/notificationscreen"
@@ -53,7 +52,6 @@ function RootStack() {
             <stack.Screen name="Signup" component={Signup} />
             <stack.Screen name="Home" component={TabNavigator} />
             <stack.Screen name="Hobby" component={Hobby} />
-            <stack.Screen name="Bday" component={Bday} />
         </stack.Navigator>
 
     );
