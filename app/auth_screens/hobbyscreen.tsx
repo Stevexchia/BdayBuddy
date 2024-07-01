@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { Ionicons } from "@expo/vector-icons";
 import { FIREBASE_DB } from "../../FirebaseConfig"
 import { collection, addDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
-import { Ionicons } from "@expo/vector-icons";
 
 type HobbyProps = { hobby: string };
 

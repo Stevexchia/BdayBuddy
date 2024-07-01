@@ -16,7 +16,7 @@ import SignUpScreen from "./screens/signup";
 import HomeScreen from "./auth_screens/homescreen";
 import HobbyScreen from "./auth_screens/hobbyscreen";
 import ContactScreen from "./auth_screens/contactscreen";
-import Profile from "./auth_screens/profile";
+import Profile from "./auth_screens/profilescreen";
 
 //React Navigation Stack
 import RootStack from './RootStack.js';
@@ -34,7 +34,6 @@ export default function App() {
         console.log("Fonts not loaded");
         return null;
       }
-    return <Profile />;
+
     return <RootStack />;
-    return <HomeScreen />;
 } 
