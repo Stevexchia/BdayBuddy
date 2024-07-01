@@ -118,19 +118,31 @@ if (loading) return (
 
        <Text style={styles.subtitle}>Account Login</Text>
 
-       <TextInput style={styles.input}
+{/* Email Input */}
+<View style={styles.inputContainer}>
+        <Fontisto name="email" size={20} color="#4A4A4A" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
           value={email}
           onChangeText={(text) => setEmail(text)}
-          placeholder="bdaybuddy@gmail.com"
+          placeholder="Email"
+          placeholderTextColor="#4A4A4A"
           autoCapitalize="none"
-          />
+        />
+      </View>
 
-       <TextInput style={styles.input}
+      {/* Password Input */}
+      <View style={styles.inputContainer}>
+        <Fontisto name="locked" size={20} color="#4A4A4A" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
           value={password}
           onChangeText={(text) => setPassword(text)}
           placeholder="**********"
+          placeholderTextColor="#4A4A4A"
           secureTextEntry={true}
-          />
+        />
+      </View>
 
        <TouchableOpacity style = {styles.loginButton} onPress={confirmLogin}>
          <Text style = {styles.buttontext}>Login</Text>
@@ -160,11 +172,13 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: 'Ubuntu-Regular',
     borderWidth: 1,
-    borderColor: '#777',
+    borderColor: '#FFFFEE',
     backgroundColor: '#FFFFEE',
     borderRadius: 12,
     padding: 10,
     width: 240,
+    flex: 1,
+    fontSize: 14,
   },
   subtitle: {
     fontFamily: 'Ubuntu-Medium',
@@ -219,4 +233,19 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 1,
    },
+   inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFFFEE',
+    backgroundColor: '#FFFFEE',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: 300,
+    height: 50,
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
 });

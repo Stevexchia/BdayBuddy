@@ -2,6 +2,7 @@ import { Text, View, SafeAreaView, TouchableOpacity, Alert, StyleSheet, FlatList
 import React, { useState } from 'react' 
 import { FIREBASE_DB } from "../../FirebaseConfig"
 import { collection, addDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { Ionicons } from "@expo/vector-icons";
 
 type HobbyProps = {hobby: string};
 
@@ -89,12 +90,28 @@ const HobbyScreen = ({ navigation, route }) => {
           )}
         keyExtractor = {(item, index) => index.toString()}
       />
-      <TouchableOpacity className="bg-orange-200 py-2 px-4 rounded-xl border-2 border-orange-300 my-24"
-      onPress={saveHobbiesToFirestore}>
-        <Text className="font-semibold text-base">Save!</Text>
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.Button} onPress={saveHobbiesToFirestore}>
+                  <Text className="text-base font-ubuntuMed">Save</Text>
+                  <Ionicons name="checkmark-circle-outline" size={25} color='#040A1D' />
+                </TouchableOpacity>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  Button: {
+    backgroundColor: '#F9DECA',
+    flexDirection: 'row',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    columnGap: 2,
+    padding: 8,
+    shadowRadius: 4,
+    marginBottom: 45,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+  },
+})
 
 export default HobbyScreen

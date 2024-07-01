@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView, Pressable } from "react-native";
 import React, { useState, useEffect } from 'react';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { useAnimatedKeyboard } from 'react-native-reanimated';
@@ -24,6 +24,45 @@ import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mj
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [dob, setDOB] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [maxDate] = useState(new Date('2024-01-01'));
+  const toggleDatepicker = () => {
+    setShowPicker(!showPicker);
+  };
+  const onChange = ({ type }, selectedDate) => {
+    if (type == "set") {
+      const currentDate = selectedDate || date;
+      setDate(currentDate);
+
+      if (Platform.OS === "android") {
+        toggleDatepicker();
+        setDOB(formatDate(currentDate));
+      }
+    } else {
+      toggleDatepicker();
+    }
+  };
+
+  const confirmIOSDate = () => {
+    setDOB(formatDate(date));
+    toggleDatepicker();
+  }
+
+  const formatDate = (rawDate) => {
+    let date = new Date(rawDate);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let monthx = month < 10 ? `0${month}` : month;
+    let dayx = day < 10 ? `0${day}` : day;
+
+    return `${dayx}-${monthx}-${year}`;
+  };
+
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,6 +80,11 @@ WebBrowser.maybeCompleteAuthSession();
     setError('');
     if (!name.trim()) {
       setError('Please enter your name.');
+      setLoading(false);
+      return;
+    }
+    if (!dob.trim()) {
+      setError('Please enter your date of birth.');
       setLoading(false);
       return;
     }
@@ -62,7 +106,8 @@ WebBrowser.maybeCompleteAuthSession();
       // Set user data to the document
       await setDoc(userDocRef, {
         name: name,
-        email: email
+        email: email,
+        dob: dob,
       });
 
       console.log("Sign Up successful!");
@@ -151,6 +196,7 @@ if (loading) return (
            value={name}
            onChangeText={(text) => setName(text)}
            placeholder="Set Username"
+           placeholderTextColor="#4A4A4A"
            autoCapitalize="none"
            >
           </TextInput>
@@ -162,10 +208,74 @@ if (loading) return (
            value={email}
            onChangeText={(text) => setEmail(text)}
            placeholder="bdaybuddy@gmail.com"
+           placeholderTextColor="#4A4A4A"
            autoCapitalize="none"
            >
           </TextInput>
        </View>
+
+       <View>
+        <Text className="justify-start p-1">Date of Birth</Text>
+
+        {showPicker && (
+          <DateTimePicker mode="date" 
+          display="spinner" 
+          value={date} 
+          onChange={onChange} 
+          style={styles.datePicker}
+          maximumDate={maxDate}
+          />
+        )}
+
+        {showPicker && Platform.OS === "ios" && (
+          <View
+            style={{ flexDirection: "row",
+            justifyContent: "space-around"
+            }}
+          >
+            <TouchableOpacity style={[
+              styles.pickerButton,
+              { backgroundColor: "#475569"},
+            ]}
+              onPress={toggleDatepicker}
+            >
+              <Text
+              style={[
+                styles.buttontext,
+                { color: "#E5E7EB" }
+              ]}
+              >Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[
+              styles.pickerButton,
+            ]}
+              onPress={confirmIOSDate}
+            >
+              <Text
+              style={[
+                styles.buttontext,
+              ]}
+              >Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {!showPicker && (
+        <Pressable onPress={toggleDatepicker}>
+          <TextInput
+            style={styles.input}
+            value={dob}
+            onChangeText={setDOB}
+            placeholder="DD-MM-YYYY"
+            placeholderTextColor="#4A4A4A"
+            autoCapitalize="none"
+            editable={false}
+            onPressIn={toggleDatepicker}
+          ></TextInput>
+        </Pressable>
+        )}
+      </View>
 
        <View>
          <Text className="justify-start font-ubuntuReg p-1">Password</Text>
@@ -173,6 +283,7 @@ if (loading) return (
            value={password}
            onChangeText={(text) => setPassword(text)}
            placeholder="**********"
+           placeholderTextColor="#4A4A4A"
            autoCapitalize="none"
            secureTextEntry={true}
            >
@@ -185,6 +296,7 @@ if (loading) return (
            value={confirmpassword}
            onChangeText={(text) => setConfirmPassword(text)}
            placeholder="**********"
+           placeholderTextColor="#4A4A4A"
            autoCapitalize="none"
            secureTextEntry={true}
            >
@@ -229,7 +341,7 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: 'Ubuntu-Regular',
     borderWidth: 1,
-    borderColor: '#777',
+    borderColor: '#FFFFEE',
     backgroundColor: '#FFFFEE',
     borderRadius: 10,
     padding: 10,
@@ -285,5 +397,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 1,
     elevation: 1,
+  },
+  datePicker: {
+    height: 120,
+    marginTop: -10,
+  },
+  pickerButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E5E7EB',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFFFEE',
+    backgroundColor: '#FFFFEE',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: 300,
+    height: 50,
+  },
+  inputIcon: {
+    marginRight: 8,
   },
 })
