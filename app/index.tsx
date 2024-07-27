@@ -1,39 +1,46 @@
-import "react-native";
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
-//google authentication setup
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from 'expo-web-browser';
-import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from "firebase/auth";
-import { FIREBASE_AUTH } from "@/FirebaseConfig";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
-//screens
-import StartScreen from "./screens/startscreen";
-import LoginScreen from "./screens/login";
-import SignUpScreen from "./screens/signup";
+// Import navigation stacks
+import AppNavigator from './App/AppNavigator';
+import AuthNavigator from './Auth/AuthNavigator';
 
-import HomeScreen from "./auth_screens/homescreen";
-import HobbyScreen from "./auth_screens/hobbyscreen";
-import ContactScreen from "./auth_screens/contactscreen";
-import Profile from "./auth_screens/profilescreen";
-
-//React Navigation Stack
-import RootStack from './RootStack.js';
-import { ActivityIndicator, View } from "react-native";
-
-export default function App() {
+const App = () => {
     const [fontsLoaded] = useFonts({
         'Cherry': require('../assets/fonts/CherryBombOne-Regular.ttf'),
         'Ubuntu-Light': require('../assets/fonts/Ubuntu-Light.ttf'),
         'Ubuntu-Regular': require('../assets/fonts/Ubuntu-Regular.ttf'),
         'Ubuntu-Medium': require('../assets/fonts/Ubuntu-Medium.ttf'),
-      }); 
-    
-      if (!fontsLoaded) {
-        console.log("Fonts not loaded");
-        return null;
-      }
+    });
 
-    return <RootStack />;
-} 
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                console.log('User is logged in:', currentUser);
+            } else {
+                console.log('No user is logged in.');
+            }
+            setUser(currentUser);
+        });
+    
+        return unsubscribe;
+    }, []);
+
+    if (!fontsLoaded) {
+        return null; // or a loading spinner
+    }
+
+    return (
+        <NavigationContainer>
+            {user ? <AppNavigator userId={user.uid} /> : <AuthNavigator />}
+        </NavigationContainer>
+    );
+};
+
+export default App;
