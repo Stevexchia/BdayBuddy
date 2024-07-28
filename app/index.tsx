@@ -3,12 +3,15 @@ import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import registerNNPushToken from 'native-notify';
 
 // Import navigation stacks
 import AppNavigator from './App/AppNavigator';
 import AuthNavigator from './Auth/AuthNavigator';
 
-const App = () => {
+export default function App() { 
+    registerNNPushToken(22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
+
     const [fontsLoaded] = useFonts({
         'Cherry': require('../assets/fonts/CherryBombOne-Regular.ttf'),
         'Ubuntu-Light': require('../assets/fonts/Ubuntu-Light.ttf'),
@@ -37,10 +40,10 @@ const App = () => {
     }
 
     return (
-        <NavigationContainer>
-            {user ? <AppNavigator userId={user.uid} /> : <AuthNavigator />}
-        </NavigationContainer>
+        // <NavigationContainer>
+            user ? <AppNavigator userId={user.uid} /> : <AuthNavigator />
+        // </NavigationContainer>
     );
 };
 
-export default App;
+// export default App;

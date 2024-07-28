@@ -7,6 +7,8 @@ import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import { registerIndieID, unregisterIndieDevice } from 'native-notify';
+import axios from 'axios';
 
 //formik
 import { Formik } from 'formik';
@@ -21,7 +23,9 @@ const { brand, darklight, primary } = Colors;
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
 
 //***APP CODE STARTS BELOW***
-const Login = ({ navigation }) => {
+export default function Login ( {navigation} ) {
+
+// const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,12 +35,16 @@ const Login = ({ navigation }) => {
   //initialising web browser
 WebBrowser.maybeCompleteAuthSession();
 
-  async function confirmLogin() {
+  async function confirmLogin() {    
+
     setLoading(true);
     try {
       console.log("Logging in...");
       const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       const uid = userCredential.user.uid;
+
+      registerIndieID({ userId: uid }, 22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
+
       console.log("Login successful!");
       navigation.navigate("Home", { userId: uid });
     } catch (error) {
@@ -165,7 +173,7 @@ if (loading) return (
   );
 };
 
-export default Login;
+// export default Login;
 
 
 const styles = StyleSheet.create({

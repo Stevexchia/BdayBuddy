@@ -5,6 +5,8 @@ import { signOut, updatePassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DB } from '@/FirebaseConfig';
 import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
+import { registerIndieID, unregisterIndieDevice } from 'native-notify';
+
 
 const ProfileScreen = ({ navigation, route }) => {
   const { userId } = route.params;
@@ -80,6 +82,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const handleLogout = async () => {
     try {
+      unregisterIndieDevice([userId], 22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
+      
       await signOut(FIREBASE_AUTH);
       Alert.alert('Logged out', 'You have been logged out successfully.');
       navigation.navigate("Start");
