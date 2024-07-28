@@ -25,6 +25,7 @@ const AppNavigator = ({ userId }) => {
                     height: 50,
                     paddingBottom: 0,
                     paddingTop: 10,
+                    backgroundColor: '#fff',
                 },
                 tabBarShowLabel: false,
                 tabBarIcon: ({ focused, color, size }) => {
