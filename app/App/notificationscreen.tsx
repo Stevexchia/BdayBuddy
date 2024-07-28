@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { FIREBASE_DB } from '@/FirebaseConfig';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
+// import React, { useState, useEffect } from 'react-native';
+import { getNotificationInbox } from 'native-notify';
+// import { FlatList } from 'react-native-reanimated/lib/typescript/Animated';
 
-const NotificationScreen = ({ route }) => {
+export default function NotificationScreen({ route }) {
   const { userId } = route.params;
+  const [data, setData] = useState([]);
+
+  useEffect(async () => {
+    let notifications = await getNotificationInbox(22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
+    console.log("notifications: ", notifications);
+    setData(notifications);
+}, []);
+
   const [userName, setUserName] = useState('Username');
 
   const saveSubID = async (userId, subID) => {
@@ -55,12 +66,12 @@ const NotificationScreen = ({ route }) => {
       title: 'hello',
       message: 'test',
     })
-    .then(response => {
-      console.log('Notification sent:', response.data);
-    })
-    .catch(error => {
-      console.error('Error sending notification:', error.response?.data || error.message);
-    });
+      .then(response => {
+        console.log('Notification sent:', response.data);
+      })
+      .catch(error => {
+        console.error('Error sending notification:', error.response?.data || error.message);
+      });
   };
 
   useEffect(() => {
@@ -82,39 +93,40 @@ const NotificationScreen = ({ route }) => {
   }, [userId]);
 
   return (
-    <View style={styles.container}>
+    <View className="flex-auto">
       <ImageBackground source={require('@/assets/images/background.png')} style={styles.image}>
-        <Text style={styles.title}>BDAYBUDDY</Text>
-        <Text style={styles.subtitle}>NOTIFS</Text>
-        <TouchableOpacity style={styles.button} onPress={handleSend}>
+        <Text style={styles.title}>NOTIFICATIONS</Text>
+        {/* <TouchableOpacity style={styles.button} onPress={handleSend}>
           <Text style={styles.buttonText}>Post Something</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <FlatList 
+        data={data}
+        keyExtractor={item => item.notification_id}
+        renderItem={({ item }) => 
+          <View style={styles.notifItem}>
+            <Text style={styles.notifTitle}>{item.title}</Text>
+            <Text style={styles.notifBody}>{item.message}</Text>
+            <Text style={styles.notifDate}>{item.date}</Text>
+          </View>
+        }
+        />
       </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   title: {
     fontFamily: 'Cherry',
     color: '#294865',
     fontSize: 48,
     marginTop: 16,
+    marginBottom: 16,
   },
-  subtitle: {
-    fontFamily: 'Cherry',
-    color: '#294865',
-    fontSize: 24,
-    marginTop: 8,
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#294865',
@@ -127,6 +139,33 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
   },
+  notifItem: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    width: 365,
+    marginBottom: 5,
+    borderRadius: 10,
+    shadowOpacity: 0.1,
+    elevation: 1,
+  },
+  notifTitle: {
+    fontFamily: 'Ubuntu-Medium',
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  notifBody: {
+    fontFamily: 'Ubuntu-Regular',
+    color: '#808080' ,
+    fontSize: 15,
+    marginBottom: 8,
+  },
+  notifDate: {
+    fontFamily: 'Ubuntu-Regular',
+    color: '#808080' ,
+    fontSize: 15,
+    marginBottom: 5,
+    alignSelf: 'flex-end',
+  },
 });
 
-export default NotificationScreen;
+// export default NotificationScreen;

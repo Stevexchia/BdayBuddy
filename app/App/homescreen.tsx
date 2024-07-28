@@ -82,13 +82,20 @@ export default function HomeScreen() {
     })();
   }, []); // Empty dependency array to run only once
 
+  function handleContactPress() {
+    console.log("Contact Selected")
+  }
+
   const renderContactItem = ({ item }: { item: Contacts.Contact }) => (
-    <View style={styles.contactItem}>
+    <View>
+      <TouchableOpacity style={styles.contactItem} onPress={handleContactPress} >
       <Text style={styles.name}>{item.name}</Text>
       {item.phoneNumbers && item.phoneNumbers.length > 0 && (
         <Text>{item.phoneNumbers[0].number}</Text>
       )}
+    </TouchableOpacity>
     </View>
+    
   );
 
   const keyExtractor = (item: Contacts.Contact) => {
