@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView, Pressable } from "react-native";
+import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, ImageBackground, Pressable } from "react-native";
 import React, { useState, useEffect } from 'react';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { useAnimatedKeyboard } from 'react-native-reanimated';
@@ -185,7 +185,10 @@ if (loading) return (
 //end of google authentication
   
   return (
-    <View className="bg-indigo-300 flex-1 items-center gap-3 justify-center"> 
+    <ImageBackground
+    source={require("@/assets/images/bgblur.png")}
+    style={styles.background}
+  >
        <Image className="flex w-20 h-20"
           source={require('@/assets/images/bdaybuddy-logo.png')}
         />
@@ -315,7 +318,11 @@ if (loading) return (
         >Already have an account? Login</Text>
        </TouchableOpacity>
 
-       <View style={styles.line}></View>
+       <View style={styles.lineContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>Or Login with</Text>
+          <View style={styles.line} />
+        </View>
 
        <TouchableOpacity style={styles.googleButton} onPress={() => promptAsync()}>
        <Image className="flex w-7 h-7 mr-3"
@@ -323,7 +330,7 @@ if (loading) return (
         /> 
         <Text className="text-black font-ubuntuMed shadow">Sign in with Google</Text>
        </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -337,7 +344,21 @@ const styles = StyleSheet.create({
     backgroundColor: "E0E7FF",
     padding: 20,
   },
-  
+  lineContainer: {
+    flexDirection: 'row',      // Places children in a row
+    alignItems: 'center',      // Centers children vertically
+    marginVertical: 20,        // Adjust as needed
+  },
+  orText: {
+    marginHorizontal: 10,      // Spacing around the "or" text
+    fontSize: 16,              // Adjust font size as needed
+    color: 'white',             // Text color
+  },
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   input: {
     fontFamily: 'Ubuntu-Regular',
     borderWidth: 1,
@@ -346,10 +367,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     width: 240,
+    marginBottom: 10,
   },
   line: {
     borderBottomWidth: 2,
-    borderBottomColor: '#777',
+    borderBottomColor: 'white',
     width: '50%',
     marginBottom: 10,
     paddingTop: 10,
@@ -368,11 +390,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: {width:0, height:0},
     shadowOpacity: 0.15,
+    marginBottom: 10,
   },
   loginButton: {
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#F9DECA',
+    borderColor: 'white',
     alignItems: 'center',
     width: 240,
     padding: 10,

@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, Platform, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { View, Button, Text, TextInput, SafeAreaView, TouchableOpacity, Image, StyleSheet, ActivityIndicator, ImageBackground } from "react-native";
 import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig'
 import { useAnimatedKeyboard } from 'react-native-reanimated';
@@ -17,11 +17,8 @@ import { Octicons, Ionicons, Fontisto } from "@expo/vector-icons";
 import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
-//keyboard avoiding wrapper
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mjs'
-
 //***APP CODE STARTS BELOW***
-const Login = ({ navigation }) => {
+const Login = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,21 +28,25 @@ const Login = ({ navigation }) => {
   //initialising web browser
 WebBrowser.maybeCompleteAuthSession();
 
-  async function confirmLogin() {
-    setLoading(true);
-    try {
-      console.log("Logging in...");
-      const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
-      const uid = userCredential.user.uid;
-      console.log("Login successful!");
-      navigation.navigate("Home", { userId: uid });
-    } catch (error) {
-      console.error("Error logging in:", (error as Error).message);
-      // Handle error - display error message to user
-    } finally {
-      setLoading(false);
-    }
+async function confirmLogin() {
+  setLoading(true);
+  try {
+    console.log("Logging in...");
+    const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+    const uid = userCredential.user.uid;
+
+    // Save user data in AsyncStorage
+    await AsyncStorage.setItem("@user", JSON.stringify(userCredential.user));
+
+    console.log("Login successful!");
+    navigation.navigate("Home", { userId: uid });
+  } catch (error) {
+    console.error("Error logging in:", (error as Error).message);
+    // Handle error - display error message to user
+  } finally {
+    setLoading(false);
   }
+}
 
   function handleSignUp() {
     console.log("Sign Up");
@@ -110,17 +111,26 @@ if (loading) return (
   //end of google authentication
 
   return (
-   <View className="bg-indigo-300 flex-1 items-center justify-center gap-3"> 
-      <Text className="text-3xl font-ubuntuMed">Welcome to BdayBuddy!</Text>
-       <Image className="flex w-20 h-20"
-          source={require('@/assets/images/bdaybuddy-logo.png')}
+    <ImageBackground
+    source={require("@/assets/images/bgblur.png")}
+    style={styles.background}
+  >
+    <View style={styles.container}>
+      <Text style={styles.welcomeText}>Welcome to BdayBuddy!</Text>
+      <Image
+        style={styles.logo}
+        source={require("@/assets/images/bdaybuddy-logo.png")}
+      />
+      <Text style={styles.subtitle}>Account Login</Text>
+
+      {/* Email Input */}
+      <View style={styles.inputContainer}>
+        <Fontisto
+          name="email"
+          size={20}
+          color="#4A4A4A"
+          style={styles.inputIcon}
         />
-
-       <Text style={styles.subtitle}>Account Login</Text>
-
-{/* Email Input */}
-<View style={styles.inputContainer}>
-        <Fontisto name="email" size={20} color="#4A4A4A" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
           value={email}
@@ -133,7 +143,12 @@ if (loading) return (
 
       {/* Password Input */}
       <View style={styles.inputContainer}>
-        <Fontisto name="locked" size={20} color="#4A4A4A" style={styles.inputIcon} />
+        <Fontisto
+          name="locked"
+          size={20}
+          color="#4A4A4A"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           value={password}
@@ -144,108 +159,148 @@ if (loading) return (
         />
       </View>
 
-       <TouchableOpacity style = {styles.loginButton} onPress={confirmLogin}>
-         <Text style = {styles.buttontext}>Login</Text>
-       </TouchableOpacity>
+      <TouchableOpacity style={styles.loginButton} onPress={confirmLogin}>
+        <Text style={styles.buttontext}>Login</Text>
+      </TouchableOpacity>
 
-       <TouchableOpacity style = {styles.signupButton} onPress={handleSignUp}>
-        <Text className="text-white font-ubuntuMed shadow px-1">No account? Sign up now!</Text>
-       </TouchableOpacity>
-       <View style={styles.line}></View>
+      <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
+        <Text style={styles.signupButtonText}>No account? Sign up now!</Text>
+      </TouchableOpacity>
 
-       <TouchableOpacity style={styles.googleButton} 
-       onPress={() => promptAsync()}>
-       <Image className="flex w-7 h-7 mr-3"
-          source={require('@/assets/images/google.png')}
-        /> 
-        <Text className="text-black font-ubuntuMed shadow">Continue with Google</Text>
-       </TouchableOpacity>
+      <View style={styles.lineContainer}>
+  <View style={styles.line} />
+  <Text style={styles.orText}>Or Login with</Text>
+  <View style={styles.line} />
+</View>
 
+      <TouchableOpacity style={styles.googleButton} onPress={() => promptAsync()}>
+        <Image
+          style={styles.googleIcon}
+          source={require("@/assets/images/google.png")}
+        />
+        <Text style={styles.googleButtonText}>Continue with Google</Text>
+      </TouchableOpacity>
     </View>
-  );
+  </ImageBackground>
+);
 };
 
 export default Login;
 
 
 const styles = StyleSheet.create({
-  input: {
-    fontFamily: 'Ubuntu-Regular',
-    borderWidth: 1,
-    borderColor: '#FFFFEE',
-    backgroundColor: '#FFFFEE',
-    borderRadius: 12,
-    padding: 10,
-    width: 240,
+  background: {
     flex: 1,
-    fontSize: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  subtitle: {
-    fontFamily: 'Ubuntu-Medium',
-    fontSize: 26,
-    fontWeight: 'bold',
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  logo: {
+    width: 80,
+    height: 80,
     marginBottom: 20,
   },
-  line: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#777',
-    width: '50%',
-    marginBottom: 10,
-    paddingTop: 10,
+  subtitle: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 20,
   },
-  loginButton: {
-    backgroundColor: '#F9DECA',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 200,
-    padding:10,
-    shadowRadius: 4,
-    shadowOffset: {width:0, height:0},
-    shadowOpacity: 0.15,
-  },
-  signupButton: {
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#F9DECA',
-    alignItems: 'center',
-    width: 200,
-    padding: 10,
-  },
-  buttontext: {
-    fontFamily: 'Ubuntu-Medium',
-    color: '#294865',
-    fontSize: 20,
-  },
-  googleButton: {
-    borderColor: '#DDDDDD',
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 1,
-   },
-   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FFFFEE',
-    backgroundColor: '#FFFFEE',
+    borderColor: "black",
+    backgroundColor: "#FFFFEE",
     borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 10,
     width: 300,
     height: 50,
   },
+  input: {
+    flex: 1,
+    fontSize: 14,
+  },
   inputIcon: {
     marginRight: 8,
+  },
+  loginButton: {
+    backgroundColor: "#F9DECA",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 200,
+    padding: 10,
+    marginVertical: 10,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+  },
+  signupButton: {
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: "white",
+    alignItems: "center",
+    width: 200,
+    padding: 10,
+  },
+  signupButtonText: {
+    color: "white",
+  },
+  lineContainer: {
+    flexDirection: 'row',      // Places children in a row
+    alignItems: 'center',      // Centers children vertically
+    marginVertical: 20,        // Adjust as needed
+  },
+  line: {
+    flex: 1,                   // Makes the line take up remaining space
+    height: 1,                 // Line thickness
+    backgroundColor: 'white',   // Line color
+  },
+  orText: {
+    marginHorizontal: 10,      // Spacing around the "or" text
+    fontSize: 16,              // Adjust font size as needed
+    color: 'white',             // Text color
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 1,
+  },
+  googleIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  googleButtonText: {
+    color: "#000",
+  },
+  buttontext: {
+    fontFamily: "Ubuntu-Medium",
+    color: "#294865",
+    fontSize: 20,
+    textAlign: "center",
   },
 });
