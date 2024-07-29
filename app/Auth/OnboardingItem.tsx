@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, useWindowDimensions } from 'react-native'
 import React from 'react'
 
-export default OnboardingItem = ({ item }) => {
+const OnboardingItem = ({ item }: { item: any }) => {
     const { width } = useWindowDimensions();
 
   return (
@@ -43,3 +43,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 64,
     },
 });
+
+export default OnboardingItem;

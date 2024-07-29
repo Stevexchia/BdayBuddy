@@ -1,11 +1,11 @@
-import { Text, View, SafeAreaView, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
+import { Text, View, SafeAreaView, TouchableOpacity, Image, StyleSheet, ActivityIndicator, ImageBackground } from "react-native";
 import React, { useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Onboarding from "../Auth/onboarding"
 
-export default function StartScreen({ navigation }) {
+export default function StartScreen({ navigation }: { navigation: any }) {
   const [loading, setLoading] = useState(true);
   const [viewedOnboarding, setViewedOnboarding] = useState(null);
+
   const Loading = () => {
     return (
       <View style={styles.loadingContainer}>
@@ -17,7 +17,6 @@ export default function StartScreen({ navigation }) {
   const checkOnboarding = async () => {
     try {
       const value = await AsyncStorage.getItem('@viewedOnboarding');
-
       if (value !== null) {
         setViewedOnboarding(true);
       }
@@ -48,28 +47,59 @@ export default function StartScreen({ navigation }) {
   }
 
   return (
-    <View className="flex-1 items-center bg-indigo-300">
-      {loading ? (
+    <ImageBackground
+    source={require('@/assets/images/bg.png')}
+    style={styles.background}
+  >
+    {loading ? (
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
-      ) : (
-        <View style={styles.innerContainer}>
-      <Image className="mb-2"
-        source={require('@/assets/images/bdaybuddy-banner.png')}
-      />
-      <Text style = {styles.title}>BDAYBUDDY</Text>
-
-      <TouchableOpacity style = {styles.button} onPress={handleOnboard}>
-        <Text style = {styles.buttontext}>Get Started</Text>
-      </TouchableOpacity>
       </View>
-      )}
-    </View>
-  );
+    ) : (
+      <>
+        <View style={styles.mainContent}>
+          <Image
+            source={require('@/assets/images/bdaybuddy-logo.png')}
+            style={styles.logo}
+          />
+          <Text style={styles.title}>BDAYBUDDY</Text>
+          <Text style={styles.subtitle}>Spot-on Gifts, Everytime</Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleOnboard}>
+            <Text style={styles.buttonText}>Get Started</Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    )}
+  </ImageBackground>
+);
 }
 
 const styles = StyleSheet.create({
-  innerContainer: {
-    alignItems: 'center',     // Center horizontally within the inner container
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',    // Make sure the background covers the entire screen
+    height: '100%',   // Make sure the background covers the entire screen
+  },
+  mainContent: {
+    alignItems: 'center',
+    flex: 1, // Take up available space
+    justifyContent: 'center', // Center content within this section
+  },
+  buttonContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: 50, // Add padding to position button higher if needed
+  },
+  logo: {
+    width: 250,   // Set a specific width for the logo
+    height: 250,  // Set a specific height for the logo
+    resizeMode: 'contain', // Ensures the image fits within the specified size
+    marginBottom: 20, // Space between the logo and the text below
   },
   title: {
     fontFamily: 'Cherry',
@@ -77,8 +107,14 @@ const styles = StyleSheet.create({
     fontSize: 48,
     marginBottom: 14,
   },
+  subtitle: { 
+    fontFamily: 'Ubuntu-Regular',
+    color: '#294865',
+    fontSize: 16,
+    marginBottom: 20,
+  },
   button: {
-    backgroundColor: '#F9DECA',
+    backgroundColor: 'white',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
@@ -89,7 +125,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width:0, height:0},
     shadowOpacity: 0.15,
   },
-  buttontext: {
+  buttonText: {
     fontFamily: 'Ubuntu-Medium',
     color: '#294865',
     fontSize: 20,

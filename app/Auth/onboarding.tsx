@@ -7,10 +7,10 @@ import Paginator from './Paginator'
 import slides from './slides'
 import NextButton from './NextButton'
 
-export default Onboarding = ({ navigation }) => {
+const Onboarding = ({ navigation }: { navigation: any }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
-    const slidesRef = useRef(null);
+    const slidesRef = useRef<FlatList | null>(null);
 
     const viewableItemsChanged = useRef(({ viewableItems }) => {
         setCurrentIndex(viewableItems[0].index);
@@ -20,16 +20,16 @@ export default Onboarding = ({ navigation }) => {
 
     const scrollTo = async () => {
         if (currentIndex < slides.length - 1) {
-            slidesRef.current.scrollToIndex({ index: currentIndex + 1 });
+            slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
         } else {
-            try{
+            try {
                 await AsyncStorage.setItem('@viewedOnboarding', 'true');
                 navigation.navigate('Login');
             } catch (err) {
-                console.log('Error @setItem: ', err)
+                console.log('Error @setItem: ', err);
             }
         }
-    }
+    };
 
   return (
     <View style={styles.container}>
@@ -65,3 +65,5 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF"
     }
 })
+
+export default Onboarding;
