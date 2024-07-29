@@ -9,6 +9,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
 import { registerIndieID, unregisterIndieDevice } from 'native-notify';
 import { CommonActions } from '@react-navigation/native';
+import Hobby from '../Auth/hobbyscreen'
 
   const ProfileScreen = ({ navigation, route }) => {
     const { userId = null } = route.params || {};
@@ -177,6 +178,10 @@ import { CommonActions } from '@react-navigation/native';
       }
     };
 
+    const handleHobby = () => {
+      navigation.navigate("EditHobby"); // Navigate to the Hobby screen
+    };
+
     return (
       <ImageBackground source={require('@/assets/images/background.png')} style={styles.backgroundImage}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -204,7 +209,7 @@ import { CommonActions } from '@react-navigation/native';
               <Ionicons name="person-outline" size={20} color="black" style={styles.optionIcon} />
               <Text style={styles.optionText}>Edit Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={() => {/* Navigate to Edit Hobbies & Preferences screen */}}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => {handleHobby}}>
               <Ionicons name="heart-half" size={20} color="black" style={styles.optionIcon} />
               <Text style={styles.optionText}>Edit Hobbies & Preferences</Text>
             </TouchableOpacity>

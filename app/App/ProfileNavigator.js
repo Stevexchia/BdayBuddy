@@ -3,6 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileMain from "./profilescreen";
 import EditProfile from "./pseditprofile";
+import EditHobby from "../Auth/hobbyscreen"
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -22,6 +23,11 @@ const ProfileStackNavigator = ({ route }) => {
                 name="EditProfile" 
                 options={{ headerShown: false }}
                 component={EditProfile} 
+            />
+            <ProfileStack.Screen 
+                name="EditHobby" 
+                options={{ headerShown: false }}
+                component={EditHobby} 
             />
         </ProfileStack.Navigator>
     );

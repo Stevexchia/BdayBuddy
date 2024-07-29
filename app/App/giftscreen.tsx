@@ -300,7 +300,7 @@ const GiftScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F9DECA',
     paddingTop: 20,
   },
   title: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     color: '#294865',
     textAlign: 'center',
     marginVertical: 10,
-    marginTop: 20,
+    fontFamily: 'Cherry',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -339,6 +339,7 @@ const styles = StyleSheet.create({
   filterButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontFamily: 'Ubuntu-medium',
   },
   categoryContainer: {
     marginBottom: 10,
@@ -356,6 +357,7 @@ const styles = StyleSheet.create({
   categoryText: {
     color: '#294865',
     fontSize: 16,
+    fontFamily: 'Ubuntu-medium',
   },
   selectedCategoryText: {
     color: '#fff',
@@ -388,6 +390,7 @@ const styles = StyleSheet.create({
   toggleFavoritesButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontFamily: 'Ubuntu-medium',
   },
   favoriteButton: {
     backgroundColor: '#fff', // Background color to make sure the button is visible
@@ -404,12 +407,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     textAlign: 'center',
+    fontFamily: 'Ubuntu-medium',
   },
   price: {
     fontSize: 14,
     color: '#888',
     textAlign: 'center',
     marginTop: 5,
+    fontFamily: 'Ubuntu-medium',
   },
   modalContainer: {
     flex: 1,
@@ -472,16 +477,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    fontFamily: 'Ubuntu-medium',
   },
   modalPrice: {
     fontSize: 16,
     color: '#888',
     marginBottom: 10,
+    fontFamily: 'Ubuntu-medium',
   },
   modalDescription: {
     fontSize: 14,
     color: '#555',
     marginBottom: 10,
+    fontFamily: 'Ubuntu-medium',
   },
   shopeeButton: {
     flexDirection: 'row',
@@ -496,6 +504,7 @@ const styles = StyleSheet.create({
   shopeeButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontFamily: 'Ubuntu-medium',
   },
 });
 

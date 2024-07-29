@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, StatusBar } from 'react-native';
 import { useFonts } from 'expo-font';
-import { NavigationContainer } from '@react-navigation/native';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 import registerNNPushToken from 'native-notify';
@@ -83,10 +82,9 @@ export default function App() {
     }
 
     return (
-        // <NavigationContainer>
-            user ? <AppNavigator userId={user.uid} /> : <AuthNavigator />
-        // </NavigationContainer>
+        <>
+            <StatusBar hidden={true} />
+            {user ? <AppNavigator userId={user.uid} /> : <AuthNavigator />}
+        </>
     );
-};
-
-// export default App;
+}

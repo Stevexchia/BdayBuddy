@@ -2,16 +2,6 @@
   "expo": {
     "name": "BdayBuddy",
     "slug": "BdayBuddy",
-    "expo": {
-      "plugins": [
-        [
-          "expo-image-picker",
-          {
-            "photosPermission": "The app accesses your photos to let you share them with your friends."
-          }
-        ]
-      ]
-    },
     "version": "1.0.0",
     "assetBundlePatterns": [
       "assets/**/*"
@@ -55,6 +45,7 @@
       "eas": {
         "projectId": "ad10802c-1af1-4fa3-8b4a-79fed0d0bad8"
       }
-    }
+    },
+    "owner": "stevexchia"
   }
 }

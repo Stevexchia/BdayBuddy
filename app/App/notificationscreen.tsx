@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Cherry',
     color: '#294865',
-    fontSize: 48,
+    fontSize: 24,
     marginTop: 16,
     marginBottom: 16,
   },
