@@ -1,72 +1,111 @@
-import { Text, View, Modal, TextInput, TouchableOpacity, FlatList, StyleSheet, ImageBackground } from "react-native";
+import { Text, View, Modal, TextInput, TouchableOpacity, FlatList, StyleSheet, ImageBackground, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Agenda } from 'react-native-calendars';
 import React, { useEffect, useState } from "react";
 import * as Contacts from 'expo-contacts';
 import DatePicker from 'react-native-modern-datepicker';
+import { FIREBASE_DB } from "../../FirebaseConfig"
+import { collection, addDoc, updateDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 
-export default function HomeScreen() {
+
+export default function HomeScreen({ route }) {
+  const { userId } = route.params;
+  if (!userId) {
+    console.error('User ID is undefined!');
+  }
+
   // Calendar
   const [items, setItems] = useState({});
-  const [open, setOpen] = useState(false)
-  const [date, setDate] = useState('')
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState('');
   const [event, setEvent] = useState('');
 
-  // const today = new Date().toISOString().split('T')[0];
+  useEffect(() => {
+    if (userId) {
+      fetchEvents(userId);
+    }
+  }, [userId]);
 
-  // const [selectedDate, setSelectedDate] = useState(today);
+  const fetchEvents = async (userId) => {
+    try {
+      const userDocRef = doc(FIREBASE_DB, 'users', userId);
+      const docSnapshot = await getDoc(userDocRef);
+
+      if (docSnapshot.exists()) {
+        const userData = docSnapshot.data();
+        setItems(userData.items || {});
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching events: ", error);
+    }
+  };
 
   function addBirthday() {
     setOpen(!open);
   }
 
   function handleChange(propDate) {
-    setDate(propDate);
+    console.log("Date Changed:", propDate); // Debug log
+    
+    // Ensure the date format is 'YYYY-MM-DD'
+    const formattedDate = propDate.replace(/\//g, '-');
+    setDate(formattedDate);
   }
 
   function handleSelectedDate() {
-    setOpen(!open);
+    console.log("Selected Date:", date); // Debug log
+    console.log("Event:", event); // Debug log
+    if (!date || !event) {
+      alert("Please select a date and enter an event name");
+      return;
+    }
+  
+    const newItems = { ...items };
+    if (!newItems[date]) {
+      newItems[date] = [];
+    }
+    newItems[date].push({ name: event, height: 50 });
+  
+    console.log("New Items:", newItems); // Debug log
+    
+    setItems(newItems);
+    setOpen(false); // Close modal after adding event
+    setEvent(''); // Clear event text
+    setDate(''); // Clear date
+
+    saveEventToFirestore(userId, newItems); // Save the new items to Firestore
   }
 
   const loadItemsForMonth = (month) => {
-    // Simulated data loading
+    console.log("Loading items for month:", month);
     setTimeout(() => {
-      const newItems = {
-        '2024-07-02': [],
-        '2024-07-01': [
-          { name: "Amanda's Birthday", height: 50 },
-        ],
-        '2024-07-03': [
-          { name: "Keith's Birthday", height: 50 },
-          { name: 'Graduation', height: 50 },
-        ],
-      };
+      const loadedItems = {};
+      const newItems = { ...items, ...loadedItems };
+      console.log("Loaded Items for Month:", newItems); // Debug log
       setItems(newItems);
-    }, 1000); // Simulating async data fetch delay
+    }, 1000);
   };
 
   const renderEmptyData = () => {
     return (
       <View style={styles.emptyBox}>
-
-        <Text >No events for this day</Text>
+        <Text>No events for this day</Text>
       </View>
     );
   };
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity
-        style={styles.eventBox}
-
-      >
+      <TouchableOpacity style={styles.eventBox}>
         <Text className="text-md font-ubuntuReg">{item.name}</Text>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   // Contacts
-  const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
+  const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -80,22 +119,54 @@ export default function HomeScreen() {
         }
       }
     })();
-  }, []); // Empty dependency array to run only once
+  }, []);
 
-  const renderContactItem = ({ item }: { item: Contacts.Contact }) => (
-    <View style={styles.contactItem}>
-      <Text style={styles.name}>{item.name}</Text>
-      {item.phoneNumbers && item.phoneNumbers.length > 0 && (
-        <Text>{item.phoneNumbers[0].number}</Text>
-      )}
+  const handleContactPress = () => {
+    console.log("Contact Selected");
+  }
+
+  const renderContactItem = ({ item }) => (
+    <View>
+      <TouchableOpacity style={styles.contactItem} onPress={handleContactPress}>
+        <Text style={styles.name}>{item.name}</Text>
+        {item.phoneNumbers && item.phoneNumbers.length > 0 && (
+          <Text>{item.phoneNumbers[0].number}</Text>
+        )}
+      </TouchableOpacity>
     </View>
   );
 
-  const keyExtractor = (item: Contacts.Contact) => {
+  const keyExtractor = (item) => {
     const phoneNumber = item.phoneNumbers && item.phoneNumbers.length > 0
       ? item.phoneNumbers[0].id
       : `${item.id}-${item.name}`;
     return item.id || phoneNumber || `${item.name}-${Math.random()}`;
+  };
+
+  const saveEventToFirestore = async (userId, newItems) => {
+    // Validate input
+    if (!userId || !newItems) {
+      Alert.alert('Error', 'User ID or items are missing.');
+      return;
+    }
+
+    try {
+      const userDocRef = doc(FIREBASE_DB, 'users', userId);
+      const docSnapshot = await getDoc(userDocRef);
+
+      if (!docSnapshot.exists()) {
+        // Create the document if it does not exist
+        await setDoc(userDocRef, { items: newItems });
+      } else {
+        // Update the document if it exists
+        await updateDoc(userDocRef, { items: newItems });
+      }
+
+      Alert.alert('Success', 'Event saved successfully!');
+    } catch (error) {
+      console.error('Error saving event: ', error);
+      Alert.alert('Error', 'There was an error saving your event. Please try again.');
+    }
   };
 
   return (
@@ -104,16 +175,13 @@ export default function HomeScreen() {
         <Text style={styles.title}>BDAYBUDDY</Text>
         <View className="flex-row gap-2 mb-2">
           <Ionicons name="today-outline" size={28} color='black' />
-
           <Text className="text-lg font-ubuntuMed">Upcoming Events</Text>
         </View>
         <Agenda
+          key={JSON.stringify(items)} // Force re-render when items change
           items={items}
           loadItemsForMonth={loadItemsForMonth}
-          // selected={selectedDate} // Set initial selected date
-          // onDayPress={(day) => setSelectedDate(day.dateString)}
           renderEmptyData={renderEmptyData}
-          // showOnlySelectedDayItems={true}
           renderEmptyDate={() => (
             <View style={styles.emptyBox}>
               <Text>No events for this day</Text>
@@ -139,7 +207,6 @@ export default function HomeScreen() {
             textDayFontSize: 16,
             textMonthFontSize: 16,
             textDayHeaderFontSize: 12,
-
           }}
           style={styles.calendar}
         />
@@ -148,13 +215,10 @@ export default function HomeScreen() {
             <Ionicons name="people-outline" size={28} color="black" />
             <Text className="text-lg font-ubuntuMed">Friends</Text>
           </View>
-
-
-          <TouchableOpacity style={styles.button} onPress={addBirthday}>
+          <TouchableOpacity className="bg-white" style={styles.button} onPress={addBirthday}>
             <Ionicons name="heart-circle" size={28} color='#8DB1F4' />
             <Text className="text-base font-ubuntuReg">Add a new Occasion!</Text>
           </TouchableOpacity>
-
           <Modal
             animationType="slide"
             transparent={true}
@@ -170,27 +234,28 @@ export default function HomeScreen() {
                     onChangeText={(text) => setEvent(text)}
                     placeholder="Event Name"
                     autoCapitalize="none"
-                  >
-                  </TextInput>
+                  />
                 </View>
                 <Text className="justify-start font-ubuntuMed text-base">Select a Date</Text>
                 <DatePicker
                   mode='calendar'
                   selected={date}
-                  onDateChanged={handleChange}
-                  >
-                </DatePicker>
-                <TouchableOpacity style={styles.button} onPress={handleSelectedDate}>
-                  <Text className="text-base font-ubuntuMed">Save</Text>
-                  <Ionicons name="checkmark-circle" size={28} color='#8DB1F4' />
-                </TouchableOpacity>
+                  onDateChange={handleChange}
+                />
+                <View className="flex-row gap-3">
+                  <TouchableOpacity className="bg-[#8DB1F4]" style={styles.button} onPress={handleSelectedDate}>
+                    <Text className="text-base font-ubuntuMed text-white">Save</Text>
+                    <Ionicons name="checkmark-circle" size={28} color='white' />
+                  </TouchableOpacity>
+                  <TouchableOpacity className='bg-white' style={styles.button} onPress={addBirthday}>
+                    <Text className="text-base font-ubuntuMed">Cancel</Text>
+                    <Ionicons name="close-circle" size={28} color='pink' />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-
           </Modal>
-
         </View>
-
         <FlatList className="flex-shrink"
           style={styles.contacts}
           data={contacts}
@@ -221,7 +286,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   button: {
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     borderRadius: 12,
     alignItems: 'center',
@@ -229,7 +294,7 @@ const styles = StyleSheet.create({
     columnGap: 2,
     padding: 8,
     shadowRadius: 4,
-    shadowOffset: {width:0, height:0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.15,
   },
   eventBox: {
@@ -296,4 +361,4 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 250,
   },
-})
+});

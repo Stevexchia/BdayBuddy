@@ -1,13 +1,14 @@
-  import React, {useState, useEffect} from 'react';
-  import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert, TextInput } from 'react-native';
-  import * as ImagePicker from 'expo-image-picker';
-  import * as FileSystem from 'expo-file-system';
-  import { signOut, updatePassword } from "firebase/auth";
-  import { FIREBASE_AUTH, FIREBASE_DB } from '@/FirebaseConfig';
-  import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-  import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
-  import { CommonActions } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert, TextInput } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { signOut, updatePassword } from "firebase/auth";
+import { FIREBASE_AUTH, FIREBASE_DB } from '@/FirebaseConfig';
+import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
+import { registerIndieID, unregisterIndieDevice } from 'native-notify';
+import { CommonActions } from '@react-navigation/native';
 
   const ProfileScreen = ({ navigation, route }) => {
     const { userId = null } = route.params || {};
@@ -156,9 +157,10 @@
         Alert.alert('Error', 'Failed to change password. Please try again.');
       }
     };
-
+    
     const handleLogout = async () => {
       try {
+        unregisterIndieDevice([userId], 22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
         await signOut(FIREBASE_AUTH);
         Alert.alert('Logged out', 'You have been logged out successfully.');
     

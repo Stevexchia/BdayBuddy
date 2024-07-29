@@ -7,6 +7,8 @@ import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import { registerIndieID, unregisterIndieDevice } from 'native-notify';
+import axios from 'axios';
 
 //formik
 import { Formik } from 'formik';
@@ -18,7 +20,10 @@ import { Colors } from '../../components/style'
 const { brand, darklight, primary } = Colors;
 
 //***APP CODE STARTS BELOW***
-const Login = ({ navigation }: { navigation: any }) => {
+export default function Login ( {navigation} ) {
+
+//const Login = ({ navigation }: { navigation: any }) => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,6 +42,7 @@ async function confirmLogin() {
 
     // Save user data in AsyncStorage
     await AsyncStorage.setItem("@user", JSON.stringify(userCredential.user));
+    registerIndieID({ userId: uid }, 22706, 'ZVD7i7LCQ7RGIwOxgMdQSA');
 
     console.log("Login successful!");
     navigation.navigate("Home", { userId: uid });
@@ -184,9 +190,6 @@ if (loading) return (
   </ImageBackground>
 );
 };
-
-export default Login;
-
 
 const styles = StyleSheet.create({
   background: {
