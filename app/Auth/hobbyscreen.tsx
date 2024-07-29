@@ -65,28 +65,28 @@ const HobbyScreen = ({ navigation, route }: HobbyScreenProps) => {
   const handleHobbiesSubmit = async () => {
     const selectedHobbies = hobbies.filter(hobby => hobby.selected).map(hobby => hobby.hobby);
     try {
-      const userDocRef = doc(FIREBASE_DB, 'users', userId);
-      await updateDoc(userDocRef, { hobbies: selectedHobbies, hobbiesCompleted: true });
-  
-      Alert.alert('Success', 'Hobbies saved successfully!', [
-        { 
-          text: 'OK', 
-          onPress: () => {
-            // Reset the navigation stack and set a new initial route
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'AppNavigator', params: { userId } }]
-              })
-            );
-          }
-        }
-      ]);
+        const userDocRef = doc(FIREBASE_DB, 'users', userId);
+        await updateDoc(userDocRef, { hobbies: selectedHobbies, hobbyScreenCompleted: true });
+
+        Alert.alert('Success', 'Hobbies saved successfully!', [
+            { 
+                text: 'OK', 
+                onPress: () => {
+                    // Reset the navigation stack and set a new initial route
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: 'AppNavigator' }]  // Make sure 'Home' is a valid route in your AppNavigator
+                        })
+                    );
+                }
+            }
+        ]);
     } catch (error) {
-      console.error('Error saving hobbies: ', error);
-      Alert.alert('Error', 'There was an error saving your hobbies. Please try again.');
+        console.error('Error saving hobbies: ', error);
+        Alert.alert('Error', 'There was an error saving your hobbies. Please try again.');
     }
-  };
+};
 
   return (
     <ImageBackground

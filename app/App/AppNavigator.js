@@ -1,3 +1,4 @@
+// AppNavigator.js
 import "react-native";
 import React from 'react';
 import { Colors } from '../../components/style';

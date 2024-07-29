@@ -5,6 +5,7 @@ export type AuthStackParamList = {
   Onboard: undefined;
   Login: undefined;
   Signup: undefined;
+  Contact: { userId: string };
   Hobby: { userId: string };
   DOB: { userId: string };
 };

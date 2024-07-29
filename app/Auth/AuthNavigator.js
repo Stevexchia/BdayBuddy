@@ -1,3 +1,4 @@
+// AuthNavigator.js
 import "react-native";
 import React from 'react';
 import { Colors } from '../../components/style';
@@ -5,17 +6,16 @@ const { tertiary } = Colors;
 
 // Import screens
 import Start from "./startscreen";
-import Onboard from "./onboarding"
+import Onboard from "./onboarding";
 import Login from "./login";
 import Signup from "./signup";
-import Hobby from "./hobbyscreen"
+import Hobby from "./hobbyscreen";
+import Contact from "./contactscreen";
 
 // Import navigation components
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
 const AuthNavigator = () => {
     return (
@@ -38,6 +38,7 @@ const AuthNavigator = () => {
             <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
             <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
             <Stack.Screen name="Hobby" component={Hobby} options={{ headerShown: false }} />
+            <Stack.Screen name="Contact" component={Contact} options={{ headerShown: false }} />
         </Stack.Navigator>
     );
 }

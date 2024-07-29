@@ -1,4 +1,7 @@
 {
+  "cli": {
+    "version": ">= 9.1.0"
+  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -7,14 +10,7 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {
-      "ios": {
-        "buildType": "app-store"
-      },
-      "android": {
-        "buildType": "app-bundle"
-      }
-    }
+    "production": {}
   },
   "submit": {
     "production": {}

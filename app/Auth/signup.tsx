@@ -67,6 +67,7 @@ const SignUpScreen = ({ navigation }) => {
   const [confirmpassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [hobbyScreenCompleted, setHobbyScreenCompleted] = useState(false);
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
   const provider = new GoogleAuthProvider();
@@ -108,11 +109,12 @@ WebBrowser.maybeCompleteAuthSession();
         name: name,
         email: email,
         dob: dob,
+        hobbyScreenCompleted: hobbyScreenCompleted, // Add this field
       });
 
       console.log("Sign Up successful!");
       setPersistence(FIREBASE_AUTH, browserLocalPersistence)
-      navigation.navigate("Hobby", { userId: user.uid });
+      navigation.navigate("Contact", { userId: user.uid });
     } catch (error) {
       console.error("Error Signing Up:", (error as Error).message);
       // Handle error - display error message to user
