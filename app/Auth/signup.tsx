@@ -21,7 +21,7 @@ import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper.mj
 
 //***APP CODE STARTS BELOW***
 
-const SignUpScreen = ({ navigation }: { navigation: any }) => {
+const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDOB] = useState('');
@@ -189,40 +189,82 @@ if (loading) return (
     source={require("@/assets/images/bgblur.png")}
     style={styles.background}
   >
-    <View style={styles.container}> 
-      <Image 
-        source={require('@/assets/images/bdaybuddy-logo.png')}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Account Sign Up</Text>
-      {/* Name Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput 
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-          placeholder="Set Username"
-          placeholderTextColor="#4A4A4A"
+       <Image className="flex w-20 h-20"
+          source={require('@/assets/images/bdaybuddy-logo.png')}
         />
-      </View>
+       <Text className="text-xl font-ubuntuMed">Account Sign Up</Text>
+       <View>
+         <Text className="justify-start font-ubuntuReg p-1">Name</Text>
+         <TextInput style={styles.input}
+           value={name}
+           onChangeText={(text) => setName(text)}
+           placeholder="Set Username"
+           placeholderTextColor="#4A4A4A"
+           autoCapitalize="none"
+           >
+          </TextInput>
+       </View>
 
-      {/* Email Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput 
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="bdaybuddy@gmail.com"
-          placeholderTextColor="#4A4A4A"
-        />
-      </View>
+       <View>
+         <Text className="justify-start font-ubuntuReg p-1">Email</Text>
+         <TextInput style={styles.input}
+           value={email}
+           onChangeText={(text) => setEmail(text)}
+           placeholder="bdaybuddy@gmail.com"
+           placeholderTextColor="#4A4A4A"
+           autoCapitalize="none"
+           >
+          </TextInput>
+       </View>
 
-      {/* Date of Birth Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Date of Birth</Text>
-        {/* Date Picker Logic */}
+       <View>
+        <Text className="justify-start p-1">Date of Birth</Text>
+
+        {showPicker && (
+          <DateTimePicker mode="date" 
+          display="spinner" 
+          value={date} 
+          onChange={onChange} 
+          style={styles.datePicker}
+          maximumDate={maxDate}
+          />
+        )}
+
+        {showPicker && Platform.OS === "ios" && (
+          <View
+            style={{ flexDirection: "row",
+            justifyContent: "space-around"
+            }}
+          >
+            <TouchableOpacity style={[
+              styles.pickerButton,
+              { backgroundColor: "#475569"},
+            ]}
+              onPress={toggleDatepicker}
+            >
+              <Text
+              style={[
+                styles.buttontext,
+                { color: "#E5E7EB" }
+              ]}
+              >Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[
+              styles.pickerButton,
+            ]}
+              onPress={confirmIOSDate}
+            >
+              <Text
+              style={[
+                styles.buttontext,
+              ]}
+              >Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {!showPicker && (
         <Pressable onPress={toggleDatepicker}>
           <TextInput
             style={styles.input}
@@ -232,67 +274,64 @@ if (loading) return (
             placeholderTextColor="#4A4A4A"
             autoCapitalize="none"
             editable={false}
-          />
+            onPressIn={toggleDatepicker}
+          ></TextInput>
         </Pressable>
-        {/* Conditional Rendering for iOS Date Picker */}
+        )}
       </View>
 
-      {/* Password Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Password</Text>
-        <TextInput 
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="**********"
-          placeholderTextColor="#4A4A4A"
-          secureTextEntry
-        />
-      </View>
+       <View>
+         <Text className="justify-start font-ubuntuReg p-1">Password</Text>
+         <TextInput style={styles.input}
+           value={password}
+           onChangeText={(text) => setPassword(text)}
+           placeholder="**********"
+           placeholderTextColor="#4A4A4A"
+           autoCapitalize="none"
+           secureTextEntry={true}
+           >
+          </TextInput>
+       </View>
 
-      {/* Confirm Password Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Confirm Password</Text>
-        <TextInput 
-          style={styles.input}
-          value={confirmpassword}
-          onChangeText={setConfirmPassword}
-          placeholder="**********"
-          placeholderTextColor="#4A4A4A"
-          secureTextEntry
-        />
-      </View>
+       <View>
+         <Text className="justify-start font-ubuntuReg p-1">Confirm Password</Text>
+         <TextInput style={styles.input}
+           value={confirmpassword}
+           onChangeText={(text) => setConfirmPassword(text)}
+           placeholder="**********"
+           placeholderTextColor="#4A4A4A"
+           autoCapitalize="none"
+           secureTextEntry={true}
+           >
+          </TextInput>
+       </View>
 
-      {/* Error Message */}
+      {/* Display error message */}
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      {/* Sign Up Button */}
-      <TouchableOpacity style={styles.signupButton} onPress={confirmSignUp}>
-        <Text style={styles.buttontext}>Sign Up</Text>
-      </TouchableOpacity>
+       <TouchableOpacity style = {styles.signupButton} 
+       onPress={confirmSignUp}>
+         <Text style = {styles.buttontext}>Sign Up</Text>
+       </TouchableOpacity>
+       <TouchableOpacity style = {styles.loginButton} onPress={handleLogin}>
+        <Text className="text-white font-ubuntuMed shadow"
+        >Already have an account? Login</Text>
+       </TouchableOpacity>
 
-      {/* Already have an account? Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginText}>Already have an account? Login</Text>
-      </TouchableOpacity>
+       <View style={styles.lineContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>Or Login with</Text>
+          <View style={styles.line} />
+        </View>
 
-      <View style={styles.lineContainer}>
-  <View style={styles.line} />
-  <Text style={styles.orText}>Or Login with</Text>
-  <View style={styles.line} />
-</View>
-
-      {/* Google Sign-In Button */}
-      <TouchableOpacity style={styles.googleButton} onPress={() => promptAsync()}>
-        <Image 
+       <TouchableOpacity style={styles.googleButton} onPress={() => promptAsync()}>
+       <Image className="flex w-7 h-7 mr-3"
           source={require('@/assets/images/google.png')}
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleText}>Sign in with Google</Text>
-      </TouchableOpacity>
-    </View>
-  </ImageBackground>
-);
+        /> 
+        <Text className="text-black font-ubuntuMed shadow">Sign in with Google</Text>
+       </TouchableOpacity>
+    </ImageBackground>
+  );
 }
 
 export default SignUpScreen
@@ -302,54 +341,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "E0E7FF",
     padding: 20,
-  },
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'Ubuntu-Medium',
-    marginBottom: 20,
-  },
-  inputContainer: {
-    width: '70%',
-    marginBottom: 15,  // Adjust this value for more spacing between inputs
-  },
-  label: {
-    fontFamily: 'Ubuntu-Regular',
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  input: {
-    fontFamily: 'Ubuntu-Regular',
-    borderWidth: 1,
-    borderColor: 'black',
-    backgroundColor: '#FFFFEE',
-    borderRadius: 10,
-    padding: 10,
-    width: '100%',
   },
   lineContainer: {
     flexDirection: 'row',      // Places children in a row
     alignItems: 'center',      // Centers children vertically
     marginVertical: 20,        // Adjust as needed
   },
-  line: {
-    flex: 1,                   // Makes the line take up remaining space
-    height: 1,                 // Line thickness
-    backgroundColor: 'white',   // Line color
-  },
   orText: {
     marginHorizontal: 10,      // Spacing around the "or" text
     fontSize: 16,              // Adjust font size as needed
     color: 'white',             // Text color
+  },
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    fontFamily: 'Ubuntu-Regular',
+    borderWidth: 1,
+    borderColor: '#FFFFEE',
+    backgroundColor: '#FFFFEE',
+    borderRadius: 10,
+    padding: 10,
+    width: 240,
+    marginBottom: 10,
+  },
+  line: {
+    borderBottomWidth: 2,
+    borderBottomColor: 'white',
+    width: '50%',
+    marginBottom: 10,
+    paddingTop: 10,
   },
   error: {
     color: 'red',
@@ -357,13 +382,15 @@ const styles = StyleSheet.create({
   },
   signupButton: {
     backgroundColor: '#F9DECA',
-    borderColor: 'white',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 150,
+    width: 240,
     padding: 10,
-    marginBottom: 20, // Added more space before login button
+    shadowRadius: 4,
+    shadowOffset: {width:0, height:0},
+    shadowOpacity: 0.15,
+    marginBottom: 10,
   },
   loginButton: {
     borderWidth: 2,
@@ -372,12 +399,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 240,
     padding: 10,
-    marginBottom: 20, // Added more space after login button
-  },
-  loginText: {
-    color: 'white',
-    fontSize: 12,
-    fontFamily: 'Ubuntu-Large',
   },
   buttontext: {
     fontFamily: 'Ubuntu-Medium',
@@ -400,16 +421,6 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 1,
   },
-  googleIcon: {
-    width: 28,
-    height: 28,
-    marginRight: 10,
-  },
-  googleText: {
-    fontSize: 16,
-    fontFamily: 'Ubuntu-Medium',
-    color: '#000',
-  },
   datePicker: {
     height: 120,
     marginTop: -10,
@@ -422,5 +433,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E5E7EB',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFFFEE',
+    backgroundColor: '#FFFFEE',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: 300,
+    height: 50,
+  },
+  inputIcon: {
+    marginRight: 8,
   },
 })

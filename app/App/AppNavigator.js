@@ -6,7 +6,7 @@ const { tertiary } = Colors;
 // Import screens
 import Home from "./homescreen";
 import Gift from "./giftscreen";
-import Profile from "./profilescreen";
+import ProfileStackNavigator from './ProfileNavigator';
 import Notification from "./notificationscreen";
 
 // Import navigation components
@@ -52,7 +52,7 @@ const AppNavigator = ({ userId }) => {
         >
             <Tab.Screen name="Home" component={Home} initialParams={{ userId }} />
             <Tab.Screen name="Gift" component={Gift} initialParams={{ userId }} />
-            <Tab.Screen name="Profile" component={Profile} initialParams={{ userId }} />
+            <Tab.Screen name="Profile" component={ProfileStackNavigator} initialParams={{ userId }} />
             <Tab.Screen name="Notification" component={Notification} initialParams={{ userId }} />
         </Tab.Navigator>
     );

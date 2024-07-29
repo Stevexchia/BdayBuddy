@@ -1,40 +1,84 @@
   import React, {useState, useEffect} from 'react';
   import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert, TextInput } from 'react-native';
   import * as ImagePicker from 'expo-image-picker';
+  import * as FileSystem from 'expo-file-system';
   import { signOut, updatePassword } from "firebase/auth";
   import { FIREBASE_AUTH, FIREBASE_DB } from '@/FirebaseConfig';
   import { collection, updateDoc, doc, getDoc } from 'firebase/firestore';
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
   import { Ionicons } from '@expo/vector-icons'; // Example import for Ionicons
   import { CommonActions } from '@react-navigation/native';
 
   const ProfileScreen = ({ navigation, route }) => {
-    const { userId } = route.params;
+    const { userId = null } = route.params || {};
     const [userName, setUserName] = useState('Username');
-    const [profileImageUrl, setProfileImageUrl] = useState(null); // State to hold profile image URL
+    const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null); // State to hold profile image URL
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [showPasswordInputs, setShowPasswordInputs] = useState(false);
 
+    if (!userId) {
+      console.error('userId is not provided in route params.');
+      return (
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>User data not available.</Text>
+        </View>
+      );
+    }
+
     useEffect(() => {
-      // Fetch user data including profile image URL
-      const fetchUserData = async () => {
-        try {
-          const userDoc = await getDoc(doc(FIREBASE_DB, 'users', userId)); // Correct usage of Firestore methods
-
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setUserName(userData.name);
-            setProfileImageUrl(userData.profileImageUrl); // Set profile image URL from Firestore
-          } else {
-            console.log('No such document!');
+      if (userId) {
+        const fetchUserData = async () => {
+          try {
+            const userDoc = await getDoc(doc(FIREBASE_DB, 'users', userId));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              setUserName(userData.name);
+              setProfileImageUrl(userData.profileImageUrl);
+            } else {
+              console.log('No such document!');
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
           }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-
-      fetchUserData();
+        };
+        fetchUserData();
+      }
     }, [userId]);
+
+    const storage = getStorage();
+
+    const uploadImageAndUpdateFirestore = async (uri, userId) => {
+      try {
+        console.log("Starting image upload...");
+        console.log("Image URI:", uri);
+        
+        // Read file as base64
+        const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+        const blob = new Blob([base64], { type: "image/jpeg" });
+    
+        const storageRef = ref(storage, `profileImages/${userId}`);
+        console.log("Uploading to storage...");
+        
+        await uploadBytes(storageRef, blob);
+        console.log("Image uploaded, getting download URL...");
+    
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("Download URL:", downloadURL);
+        
+        if (downloadURL) {
+          const userRef = doc(FIREBASE_DB, "users", userId);
+          await updateDoc(userRef, { profileImageUrl: downloadURL });
+          console.log('Profile image URL updated in Firestore:', downloadURL);
+          return downloadURL;
+        } else {
+          throw new Error("Download URL is undefined");
+        }
+      } catch (error) {
+        console.error("Error uploading image and updating Firestore:", error);
+        Alert.alert('Error', 'Failed to upload image. Please check your network and try again.');
+      }
+    };
 
     const handleUploadPicture = async () => {
       // Ask for permission to access camera and gallery
@@ -43,17 +87,40 @@
         Alert.alert('Permission required', 'Permission to access camera roll is required!');
         return;
       }
-
+    
       // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
       });
-
+    
       if (!result.canceled) {
-        setProfileImageUrl(result.uri); // Set selected image URI
-        // Here, you would also upload the image to your server or storage
+        const uri = result.uri;
+        setProfileImageUrl(uri); // Set the local image URI
+    
+        try {
+          // Upload the image to Firebase Storage and get the download URL
+          console.log("Uploading image...");
+          const downloadUrl = await uploadImageAndUpdateFirestore(uri, userId);
+          
+          if (downloadUrl) {
+            console.log("Image uploaded successfully, URL:", downloadUrl);
+            // Update Firestore with the new profile image URL
+            setProfileImageUrl(downloadUrl); // Update local state with the download URL
+          } else {
+            console.error('Failed to upload image, download URL is undefined');
+            Alert.alert('Error', 'Failed to upload image. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          Alert.alert('Error', 'Failed to upload image. Please try again.');
+        }
       }
+    };
+ 
+    const handleEditProfile = () => {
+      console.log("EditProfile");
+      navigation.navigate("EditProfile", { userId });
     };
 
     const handleChangePassword = () => {
@@ -131,7 +198,7 @@
           <View style={styles.optionsContainer}>
             {/* Account */}
             <Text style={[styles.sectionHeader, { marginBottom: 5 }]}>Account</Text>
-            <TouchableOpacity style={styles.optionButton} onPress={() => {/* Navigate to Edit Profile screen */}}>
+            <TouchableOpacity style={styles.optionButton} onPress={handleEditProfile}>
               <Ionicons name="person-outline" size={20} color="black" style={styles.optionIcon} />
               <Text style={styles.optionText}>Edit Profile</Text>
             </TouchableOpacity>
@@ -319,7 +386,15 @@
       fontWeight: 'bold',
       fontSize: 16,
     },
-
+    centered: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    errorText: {
+      fontSize: 18,
+      color: 'red',
+    },
   });
 
   export default ProfileScreen;

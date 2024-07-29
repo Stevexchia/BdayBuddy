@@ -29,6 +29,8 @@ if (typeof window !== 'undefined') {
 }
 
 const App = () => {
+    const app = initializeApp(firebaseConfig); 
+
     const [fontsLoaded] = useFonts({
         'Cherry': require('../assets/fonts/CherryBombOne-Regular.ttf'),
         'Ubuntu-Light': require('../assets/fonts/Ubuntu-Light.ttf'),
